@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusão de Apólice - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/inclusao-apolices.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-file-invoice"></i> Inclusão de Apólice</h2>
+            <div class="page-actions">
+                 <button class="btn-salvar"><i class="fa-solid fa-save"></i> Salvar</button>
+                 <a href="/dashboard/apolices" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+            </div>
+        </header>
+
+        <main class="form-container">
+
+            <div class="form-main">
+                <section class="form-section">
+                    <h4>Dados do Cliente</h4>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="cliente">Cliente</label>
+                            <input type="text" id="cliente" placeholder="Nome do Cliente">
+                        </div>
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" placeholder="000.000.000-00">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" placeholder="email@email.com.br">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="text" id="telefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label for="preposto">Preposto</label>
+                            <input type="text" id="preposto" placeholder="Nome do preposto">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h4>Dados da Apólice</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="num-apolice">N° Apólice</label>
+                            <input type="text" id="num-apolice">
+                        </div>
+                        <div class="form-group">
+                            <label for="num-proposta">N° Proposta</label>
+                            <input type="text" id="num-proposta">
+                        </div>
+                         <div class="form-group">
+                            <label for="premio-total">Prêmio Total</label>
+                            <input type="text" id="premio-total" value="R$ 0,00">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="franquia">Franquia</label>
+                            <input type="text" id="franquia" value="R$ 0,00">
+                        </div>
+                        <div class="form-group small">
+                            <label for="classe-bonus">Classe Bônus</label>
+                            <input type="text" id="classe-bonus" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="forma-pgto">Forma de pagamento</label>
+                            <select id="forma-pgto">
+                                <option value="Boleto">Boleto</option>
+                                <option value="Debito">Débito em C/C</option>
+                                <option value="Cartao">Cartão de Crédito</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="form-section">
+                    <h4>Vigência e Itens</h4>
+                    <div class="form-row">
+                         <div class="form-group large">
+                            <label for="item">Item</label>
+                            <input type="text" id="item" placeholder="Descrição do item segurado (ex: Veículo XYZ)">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vig-inicio">Vigência Inicial</label>
+                            <input type="text" id="vig-inicio" placeholder="dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="vig-final">Vigência Final</label>
+                            <input type="text" id="vig-final" placeholder="dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="data-emissao">Data de Emissão</label>
+                            <input type="text" id="data-emissao" placeholder="dd/mm/aaaa">
+                        </div>
+                    </div>
+                </section>
+
+                 <section class="form-section">
+                    <h4>Comissão e Ramo</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cia">CIA</label>
+                            <select id="cia">
+                                <option value="Porto Seguro">Porto Seguro</option>
+                                <option value="Azul">Azul</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ramo">Ramo</label>
+                            <select id="ramo">
+                                <option value="Residencia">Residência</option>
+                                <option value="Auto">Auto</option>
+                                <option value="Vida">Vida</option>
+                            </select>
+                        </div>
+                        <div class="form-group small">
+                            <label for="comissao">% Comissão</label>
+                            <input type="text" id="comissao" value="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="parcelas">Parcelas</label>
+                            <input type="text" id="parcelas" value="12 vezes">
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <aside class="form-sidebar">
+                
+                <input type="file" id="file-input" style="display: none;" multiple>
+                
+                <button class="btn-anexar" id="btn-anexar-trigger"><i class="fa-solid fa-paperclip"></i> Anexar Apólice</button>
+                
+                <div class="file-list">
+                    <div id="file-preview-container" class="file-preview-grid">
+                        </div>
+
+                    <ul id="file-list-ul" style="display: none;"></ul>
+                </div>
+
+            </aside>
+            </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const anexarButton = document.getElementById('btn-anexar-trigger');
+            const fileInput = document.getElementById('file-input');
+            const previewContainer = document.getElementById('file-preview-container');
+
+            // --- Ação de clicar no botão "Anexar" ---
+            anexarButton.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                fileInput.click();
+            });
+
+            // --- Ação de selecionar um arquivo ---
+            fileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (!files.length) return;
+
+                for (const file of files) {
+                    const iconClass = getFileIconClass(file.name);
+                    const fileURL = URL.createObjectURL(file);
+                    
+                    const previewBox = document.createElement('div');
+                    previewBox.className = 'file-preview-box';
+                    previewBox.dataset.fileUrl = fileURL;
+
+                    // --- MUDANÇA PRINCIPAL AQUI ---
+                    // Adicionamos o <div>.preview-actions e o <a> com o ícone de olho
+                    previewBox.innerHTML = `
+                        <a href="${fileURL}" target="_blank" rel="noopener noreferrer" class="preview-link">
+                            <div class="preview-icon">
+                                <i class="fa-solid ${iconClass}"></i>
+                            </div>
+                            <div class="preview-info">
+                                <span class="file-name">${file.name}</span>
+                            </div>
+                        </a>
+
+                        <div class="preview-actions">
+                            <a href="${fileURL}" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-solid fa-eye file-view-icon"></i>
+                            </a>
+                            <i class="fa-solid fa-trash-can file-delete-icon"></i>
+                        </div>
+                    `;
+                    // --- FIM DA MUDANÇA ---
+                    
+                    previewContainer.appendChild(previewBox);
+                }
+                e.target.value = null; 
+            });
+
+            // --- Ação de excluir um arquivo (sem alteração) ---
+            previewContainer.addEventListener('click', (e) => {
+                // Verifica se o clique foi na LIXEIRA
+                if (e.target.classList.contains('file-delete-icon')) {
+                    const box = e.target.closest('.file-preview-box');
+                    if (box) {
+                        URL.revokeObjectURL(box.dataset.fileUrl);
+                        box.remove();
+                    }
+                }
+            });
+
+            // --- Função Auxiliar: Define o ícone (sem alteração) ---
+            function getFileIconClass(fileName) {
+                const extension = fileName.split('.').pop().toLowerCase();
+                switch (extension) {
+                    case 'pdf': return 'fa-file-pdf';
+                    case 'doc': case 'docx': return 'fa-file-word';
+                    case 'xls': case 'xlsx': return 'fa-file-excel';
+                    case 'jpg': case 'jpeg': case 'png': case 'gif': return 'fa-file-image';
+                    default: return 'fa-file-lines';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

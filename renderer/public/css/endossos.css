@@ -1,0 +1,82 @@
+/* backend/renderer/public/css/endossos.css */
+
+/* Ajuste na barra de filtro para ter uma busca central */
+.filter-center-search {
+    width: 30%; /* Define uma largura para a busca */
+}
+.filter-center-search .search-box {
+    width: 100%;
+}
+.filter-center-search .search-box input {
+    width: 100%; /* Faz o input ocupar todo o espaço */
+    text-align: center;
+}
+
+/* Container da lista de endossos */
+.endosso-list-container {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.endosso-list-container ul {
+    list-style: none;
+}
+
+.endosso-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.endosso-item:last-child {
+    border-bottom: none;
+}
+
+.endosso-item:hover {
+    background-color: #f5fafd; /* Mesmo hover da tabela */
+}
+
+/* Lado esquerdo (ícone e texto) */
+.endosso-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.endosso-info .fa-file-pdf {
+    color: #d32f2f; /* Vermelho PDF */
+    font-size: 1.4rem;
+}
+
+.endosso-info span {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Lado direito (ações) */
+.endosso-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.endosso-actions a {
+    text-decoration: none;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+.endosso-actions a:hover {
+    color: #002366; /* Azul Intracor */
+}
+
+/* Cor especial para o ícone de deletar */
+.endosso-actions .icon-delete:hover {
+    color: #d32f2f; /* Vermelho */
+}

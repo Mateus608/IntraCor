@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endossos - Intracor</title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="stylesheet" href="/css/endossos.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/dashboard"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li><a href="/dashboard/apolices"><i class="fa-solid fa-file-invoice"></i> Apólices</a></li>
+                <li class="active"><a href="/dashboard/endossos"><i class="fa-solid fa-file-pen"></i> Endossos</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-signature"></i> Propostas</a></li>
+                <li><a href="/dashboard/sinistros"><i class="fa-solid fa-triangle-exclamation"></i> Sinistros</a></li>
+                <li><a href="#"><i class="fa-solid fa-calculator"></i> Orçamentos</a></li>
+            </ul>
+            <div class="quoteflex-logo-nav" style="background-color: #01212B;">
+                <img src="/img/LogoQuoteFlexBranco.png" alt="QuoteFlex Logo">
+            </div>
+        </nav>
+
+        <div class="filter-bar">
+            <div class="filter-left">
+                <select name="cia">
+                    <option value="">CIA</option>
+                    <option value="porto">Porto Seguro</option>
+                </select>
+                <select name="ramo">
+                    <option value="">Ramo</option>
+                    <option value="auto">Auto</option>
+                </select>
+            </div>
+            
+            <div class="filter-center-search">
+                <div class="search-box">
+                    <input type="text" placeholder="N° Endosso">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+
+            <div class="filter-right">
+                <button class="btn-primary-incluir">
+                    <i class="fa-solid fa-plus"></i> Incluir
+                </button>
+            </div>
+        </div>
+
+        <main class="content-area">
+            <div class="endosso-list-container"> <ul>
+                    <% 
+                    // Dados de exemplo (substituir pelos dados do banco)
+                    const endossosExemplo = [
+                        { nome: 'Mateus Milane', ramo: 'Auto', num: 1 },
+                        { nome: 'Luiza Da Silva Oliveira', ramo: 'Residência', num: 2 },
+                        { nome: 'Tiago Marques Da Silva', ramo: 'Auto', num: 1 },
+                    ];
+                    %>
+
+                    <% endossosExemplo.forEach(endosso => { %>
+                    <li class="endosso-item"> <div class="endosso-info"> <i class="fa-solid fa-file-pdf"></i>
+                            <span><%= endosso.nome %> - <%= endosso.ramo %> - <%= endosso.num %></span>
+                        </div>
+                        <div class="endosso-actions"> <a href="#" title="Deletar" class="icon-delete"><i class="fa-solid fa-trash-can"></i></a>
+                            <a href="#" title="Visualizar"><i class="fa-solid fa-eye"></i></a>
+                            <a href="#" title="Download"><i class="fa-solid fa-download"></i></a>
+                        </div>
+                    </li>
+                    <% }) %>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

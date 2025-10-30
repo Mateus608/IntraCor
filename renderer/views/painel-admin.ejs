@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Intracor</title>
+    
+    <link rel="stylesheet" href="/css/style.css"> 
+    
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <main class="admin-container">
+            <h2>Painel Administrativo</h2>
+
+            <div class="admin-tabs">
+                <button class="tab-button active" onclick="openTab(event, 'tab-logs')">Logs de Auditoria</button>
+                <button class="tab-button" onclick="openTab(event, 'tab-usuarios')">Manutenção de Usuários</button>
+                <button class="tab-button" onclick="openTab(event, 'tab-relatorios')">Gerar Relatório</button>
+            </div>
+
+            <div id="tab-logs" class="tab-content active">
+                <h3>Logs do Sistema</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Ação</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (logs && logs.length > 0) { %>
+                                <% logs.forEach(log => { %>
+                                    <tr>
+                                        <td><%= log.usuario %></td>
+                                        <td><%= log.acao %></td>
+                                        <td><%= new Date(log.timestamp).toLocaleString('pt-BR') %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="3" style="text-align: center;">Nenhum log encontrado.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-usuarios" class="tab-content">
+                <h3>Usuários do Sistema</h3>
+                    <a href="/admin/usuarios/novo" class="btn-include">
+                        <i class="fa-solid fa-plus"></i> Adicionar Usuário
+                    </a>
+                    
+                    <div class="table-container">
+                    </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Login (cd_usu_bd)</th>
+                                <th>Nível</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (users && users.length > 0) { %>
+                                <% users.forEach(user => { %>
+                                    <tr>
+                                        <td><%= user.usuario_id %></td>
+                                        <td><%= user.nome %></td>
+                                        <td><%= user.cd_usu_bd %></td>
+                                        <td><%= user.nivel %></td>
+                                        <td>
+                                            <button class="btn-action btn-edit"><i class="fa-solid fa-pencil"></i> Alterar</button>
+                                            <button class="btn-action btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-relatorios" class="tab-content">
+                <h3>Relatórios</h3>
+                <p>Selecione os parâmetros para gerar o relatório.</p>
+                <button class="btn-include"><i class="fa-solid fa-file-excel"></i> Gerar Relatório (Excel)</button>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            // Esconde todos os conteúdos
+            const tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Remove 'active' de todos os botões
+            const tabbuttons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+
+            // Mostra a aba clicada e ativa o botão
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>

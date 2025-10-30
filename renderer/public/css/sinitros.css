@@ -1,0 +1,34 @@
+/* backend/renderer/public/css/sinistros.css */
+
+/* Círculo colorido para o status */
+.status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.status-dot-analise { background-color: #0d6efd; } /* Azul */
+.status-dot-aprovado { background-color: #28a745; } /* Verde */
+.status-dot-negado { background-color: #dc3545; } /* Vermelho */
+
+.status-text {
+    vertical-align: middle;
+}
+
+/* Coluna de Ação (Engrenagem) */
+.action-column-gear {
+    text-align: center;
+    width: 50px;
+}
+
+.action-icon-gear {
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+.action-icon-gear:hover {
+    opacity: 1;
+}

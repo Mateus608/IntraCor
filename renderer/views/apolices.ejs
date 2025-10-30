@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apólices - Intracor</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/css/apolices.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/dashboard"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li class="active"><a href="/dashboard/apolices"><i class="fa-solid fa-file-invoice"></i> Apólices</a></li>
+                <li><a href="/dashboard/endossos"><i class="fa-solid fa-file-pen"></i> Endossos</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-signature"></i> Propostas</a></li>
+                <li><a href="/dashboard/sinistros"><i class="fa-solid fa-triangle-exclamation"></i> Sinistros</a></li>
+                <li><a href="#"><i class="fa-solid fa-calculator"></i> Orçamentos</a></li>
+            </ul>
+            <div class="quoteflex-logo-nav" style="background-color: #01212B;">
+                <img src="/img/LogoQuoteFlexBranco.png" alt="QuoteFlex Logo">
+            </div>
+        </nav>
+
+        <div class="filter-bar">
+            <div class="filter-left">
+                <select name="cia">
+                    <option value="">CIA</option>
+                    <option value="porto">Porto Seguro</option>
+                </select>
+                <select name="ramo">
+                    <option value="">Ramo</option>
+                    <option value="auto">Auto</option>
+                </select>
+            </div>
+            
+            <div class="filter-center-search">
+                <div class="search-box">
+                    <input type="text" placeholder="N° Apólice">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-right">
+                    <a href="/dashboard/apolices/nova" class="btn-primary-incluir">
+                        <i class="fa-solid fa-plus"></i> Incluir
+                    </a>
+                </div>
+</div>
+        </div>
+
+        <main class="content-area">
+            <div class="apolice-list-container">
+                <ul>
+                    <% 
+                    // Dados de exemplo (substituir pelos dados do banco)
+                    const apolicesExemplo = [
+                        { nome: 'Mateus Milane', ramo: 'Auto', num: 20 },
+                        { nome: 'Luiza Da Silva Oliveira', ramo: 'Residência', num: 30 },
+                        { nome: 'Tiago Marques Da Silva', ramo: 'Auto', num: 25 },
+                        { nome: 'Lucas Marques', ramo: 'Auto', num: 20 },
+                        { nome: 'Carlos José', ramo: 'Auto', num: 30 },
+                        { nome: 'Fabiana Limeira Silva', ramo: 'Auto', num: 15 },
+                    ];
+                    %>
+
+                    <% apolicesExemplo.forEach(apolice => { %>
+                    <li>
+                        <div class="apolice-item">
+                            <div class="apolice-info">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <span><%= apolice.nome %> - <%= apolice.ramo %> - <%= apolice.num %></span>
+                            </div>
+                            <div class="apolice-actions">
+                                <a href="#" title="Anexar"><i class="fa-solid fa-paperclip"></i></a>
+                                <a href="#" title="Visualizar"><i class="fa-solid fa-eye"></i></a>
+                                <a href="#" title="Download"><i class="fa-solid fa-download"></i></a>
+                            </div>
+                        </div>
+                    </li>
+                    <% }) %>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

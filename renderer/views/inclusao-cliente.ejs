@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusão de Cliente - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/clientes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-plus"></i> Inclusão de Cliente</h2>
+            <div class="page-actions">
+                <button class="btn-salvar"><i class="fa-solid fa-save"></i> Salvar</button>
+                <a href="/dashboard" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+            </div>
+        </header>
+
+        <main class="form-container">
+
+            <div class="form-main">
+                <section class="form-section">
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="cliente">Cliente</label>
+                            <input type="text" id="cliente" value="Nome Completo">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="text" id="telefone" value="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" value="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="preposto">Preposto</label>
+                            <input type="text" id="preposto" value="">
+                        </div>
+                    </div>
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" value="email@email.com.br">
+                        </div>
+                        <div class="form-group">
+                            <label for="profissao">Profissão</label>
+                            <select id="profissao">
+                                <option value="medico" selected>Médico</option>
+                                <option value="engenheiro">Engenheiro</option>
+                                <option value="advogado">Advogado</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label for="nascimento">Data de nascimento</label>
+                            <input type="text" id="nascimento" value="00/00/0000">
+                        </div>
+                         <div class="form-group">
+                            <label for="grupo-economico">Grupo Econômico</label>
+                            <select id="grupo-economico">
+                                <option value="outro">Outro</option>
+                                <option value="soufer" selected>Soufer</option>
+                                <option value="unifeob" selected>Unifeob</option>
+                                <option value="semprevale" selected>Sempre Vale</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                <section class="form-section">
+                    <h4>Endereço</h4>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="logradouro">Logradouro</label>
+                            <input type="text" id="logradouro" value="Rua ">
+                        </div>
+                        <div class="form-group small">
+                            <label for="numero">Nº</label>
+                            <input type="text" id="numero" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" value="Bairro">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" value="Cidade">
+                        </div>
+                        <div class="form-group small">
+                            <label for="uf">UF</label>
+                            <select id="uf">
+                                <option value="SP" selected>SP</option>
+                                <option value="MG">MG</option>
+                                <option value="RJ">RJ</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                <section class="form-section">
+                    <h4>Observações</h4>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <textarea id="observacoes">-</textarea>
+                        </div>
+                    </div>
+                </section>
+                </div>
+
+            <aside class="form-sidebar">
+                <input type="file" id="file-input" style="display: none;" multiple>
+                
+                <button class="btn-anexar" id="btn-anexar-trigger"><i class="fa-solid fa-paperclip"></i> Anexar Documento</button>
+                
+                <div class="file-list">
+                    <ul id="file-list-ul">
+                    </ul>
+                </div>
+
+                </aside>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. Seleciona os elementos ---
+            const anexarButton = document.getElementById('btn-anexar-trigger');
+            const fileInput = document.getElementById('file-input');
+            const fileListUl = document.getElementById('file-list-ul');
+
+            // --- 2. Ação de clicar no botão "Anexar Documento" ---
+            // Faz o clique no botão visível disparar o clique no input escondido
+            anexarButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Impede o botão de submeter um formulário
+                fileInput.click();
+            });
+
+            // --- 3. Ação de selecionar um arquivo ---
+            // Disparado quando o usuário escolhe os arquivos
+            fileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (!files.length) {
+                    return;
+                }
+
+                // Cria um item na lista para cada arquivo selecionado
+                for (const file of files) {
+                    const iconClass = getFileIconClass(file.name);
+                    
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span><i class="fa-solid ${iconClass}"></i> ${file.name}</span>
+                        <i class="fa-solid fa-trash-can file-delete-icon"></i>
+                    `;
+                    fileListUl.appendChild(li);
+                }
+
+                // Limpa o input para permitir selecionar o mesmo arquivo de novo
+                e.target.value = null; 
+            });
+
+            // --- 4. Ação de excluir um arquivo (usando delegação de evento) ---
+            // Escuta cliques na LISTA (ul) inteira
+            fileListUl.addEventListener('click', (e) => {
+                // Verifica se o clique foi em um elemento com a classe 'file-delete-icon'
+                if (e.target.classList.contains('file-delete-icon')) {
+                    // Pega o 'li' pai do ícone e o remove
+                    const li = e.target.closest('li');
+                    if (li) {
+                        li.remove();
+                    }
+                }
+            });
+
+            // --- Função Auxiliar: Define o ícone com base na extensão ---
+            function getFileIconClass(fileName) {
+                const extension = fileName.split('.').pop().toLowerCase();
+                switch (extension) {
+                    case 'pdf':
+                        return 'fa-file-pdf';
+                    case 'doc':
+                    case 'docx':
+                        return 'fa-file-word';
+                    case 'xls':
+                    case 'xlsx':
+                        return 'fa-file-excel';
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                    case 'gif':
+                        return 'fa-file-image';
+                    default:
+                        return 'fa-file-lines'; // Ícone genérico
+                }
+            }
+            
+            //requisita cliente ( Criação ) 
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinistros - Intracor</title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="stylesheet" href="/css/sinistros.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/dashboard"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li><a href="/dashboard/apolices"><i class="fa-solid fa-file-invoice"></i> Apólices</a></li>
+                <li><a href="/dashboard/endossos"><i class="fa-solid fa-file-pen"></i> Endossos</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-signature"></i> Propostas</a></li>
+                <li class="active"><a href="/dashboard/sinistros"><i class="fa-solid fa-triangle-exclamation"></i> Sinistros</a></li>
+                <li><a href="#"><i class="fa-solid fa-calculator"></i> Orçamentos</a></li>
+            </ul>
+            <div class="quoteflex-logo-nav" style="background-color: #01212B;">
+                <img src="/img/LogoQuoteFlexBranco.png" alt="QuoteFlex Logo">
+            </div>
+        </nav>
+
+        <div class="filter-bar">
+            <div class="filter-left">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <select name="cia">
+                    <option value="">CIA</option>
+                </select>
+                <select name="ramo">
+                    <option value="">Ramo</option>
+                </select>
+                <button class="btn-filter">
+                    <i class="fa-solid fa-filter"></i> Filtros
+                </button>
+            </div>
+            <div class="filter-right">
+                <button class="btn-primary-incluir">
+                    <i class="fa-solid fa-plus"></i> Incluir
+                </button>
+            </div>
+        </div>
+
+        <main class="content-area">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Sinistro</th>
+                            <th>Segurado</th>
+                            <th>Apólice</th>
+                            <th>Data do ocorrido</th>
+                            <th>Descrição</th>
+                            <th>Status</th>
+                            <th></th> </tr>
+                    </thead>
+                    <tbody>
+                        <% 
+                        // Dados de exemplo para preencher a tabela
+                        const sinistrosExemplo = [
+                            { id: '001', segurado: 'Mateus Oliveira Milane', apolice: '0504441020155454', data: '14/09/2025', desc: '-', status: 'Em análise', statusClass: 'analise' },
+                            { id: '002', segurado: 'Lucia Da Silva Oliveira', apolice: '0504441020155454', data: '14/09/2025', desc: '-', status: 'Aprovado', statusClass: 'aprovado' },
+                            { id: '003', segurado: 'Maria Aparecida Marques', apolice: '0504441020155454', data: '14/09/2025', desc: '-', status: 'Negado', statusClass: 'negado' },
+                        ];
+                        %>
+                        
+                        <% sinistrosExemplo.forEach(sinistro => { %>
+                        <tr>
+                            <td><%= sinistro.id %></td>
+                            <td><%= sinistro.segurado %></td>
+                            <td><%= sinistro.apolice %></td>
+                            <td><%= sinistro.data %></td>
+                            <td><%= sinistro.desc %></td>
+                            <td>
+                                <span class="status-dot status-dot-<%= sinistro.statusClass %>"></span>
+                                <span class="status-text"><%= sinistro.status %></span>
+                            </td>
+                            <td class="action-column-gear">
+                                <a href="#"><img src="/img/EngrenagemVermelha.png" alt="Ações" class="action-icon-gear"></a>
+                            </td>
+                        </tr>
+                        <% }) %>
+
+                        <% for(let i = 0; i < 15; i++) { %>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <% } %>
+
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

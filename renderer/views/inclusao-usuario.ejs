@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusão de Usuário - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/usuarios.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-user-plus"></i> Inclusão de Usuário</h2>
+            <div class="page-actions">
+                 <button class="btn-salvar" id="btn-salvar-usuario"><i class="fa-solid fa-save"></i> Salvar</button>
+                 <a href="/admin/painel" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+            </div>
+        </header>
+
+        <main class="form-container">
+
+            <div class="form-main" style="flex: 1;"> <section class="form-section">
+                    <h4>Informações Principais</h4>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" placeholder="Nome do usuário" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cd-usu-bd">Login (cd_usu_bd)</label>
+                            <input type="text" id="cd-usu-bd" placeholder="usuario.login" required>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="form-section">
+                    <h4>Permissões e Acesso</h4>
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="nivel">Nível de Acesso</label>
+                            <select id="nivel">
+                                <option value="user">Usuário Padrão</option> 
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="situacao">Situação</label>
+                            <select id="situacao">
+                                <option value="1">Ativo</option>
+                                <option value="0">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-row">
+                        <div class="form-group">
+                            <label for="senha">Senha</label>
+                            <input type="password" id="senha" required>
+                            
+                            <i class="fa-solid fa-eye password-icon" id="toggle-senha"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmar-senha">Confirmar Senha</label>
+                            <input type="password" id="confirmar-senha" required>
+
+                            <i class="fa-solid fa-eye password-icon" id="toggle-confirmar-senha"></i>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="error-message" style="display: none; color: red; margin-bottom: 15px;"></div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. LÓGICA DE VALIDAÇÃO (DO BOTÃO SALVAR) ---
+            document.getElementById('btn-salvar-usuario').addEventListener('click', () => {
+                const senha = document.getElementById('senha').value;
+                const confirmarSenha = document.getElementById('confirmar-senha').value;
+                const errorMessage = document.getElementById('error-message');
+
+                if (senha.length < 6) {
+                    errorMessage.textContent = 'Erro: A senha deve ter pelo menos 6 caracteres.';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                if (senha !== confirmarSenha) {
+                    errorMessage.textContent = 'Erro: As senhas não conferem!';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                errorMessage.style.display = 'none';
+                alert('Validação do Front-end OK! (Aqui o backend faria o POST para o banco)');
+            });
+
+
+            // --- 2. LÓGICA DE MOSTRAR/OCULTAR SENHA (NOVO) ---
+            
+            // Seleciona os elementos
+            const senhaInput = document.getElementById('senha');
+            const toggleSenhaIcon = document.getElementById('toggle-senha');
+
+            const confirmarSenhaInput = document.getElementById('confirmar-senha');
+            const toggleConfirmarSenhaIcon = document.getElementById('toggle-confirmar-senha');
+
+            // Função reutilizável para o toggle
+            function togglePassword(input, icon) {
+                // Verifica o tipo do input
+                if (input.type === 'password') {
+                    // Muda para texto
+                    input.type = 'text';
+                    // Muda o ícone para "olho cortado" (slash)
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    // Muda para senha
+                    input.type = 'password';
+                    // Muda o ícone de volta para "olho"
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+
+            // Adiciona os event listeners nos ícones
+            toggleSenhaIcon.addEventListener('click', () => {
+                togglePassword(senhaInput, toggleSenhaIcon);
+            });
+
+            toggleConfirmarSenhaIcon.addEventListener('click', () => {
+                togglePassword(confirmarSenhaInput, toggleConfirmarSenhaIcon);
+            });
+
+        });
+    </script>
+</body>
+</html>

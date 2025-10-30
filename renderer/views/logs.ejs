@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Logs de Auditoria</title>
+    <link rel="stylesheet" href="/css/style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <%- include('partials/header') %>
+        <main class="content-area">
+            <div class="page-title-bar">
+                <div class="title">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <h2>Logs de Auditoria</h2>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Ação</th>
+                            <th>Data e Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% logs.forEach(log => { %>
+                            <tr>
+                                <td><%= log.usuario %></td>
+                                <td><%= log.acao %></td>
+                                <td><%= new Date(log.timestamp).toLocaleString('pt-BR') %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

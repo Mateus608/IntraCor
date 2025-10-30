@@ -1,0 +1,251 @@
+/* --- 6. FORMULÁRIO DE INCLUSÃO (Cliente/Apólice) --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dcdcdc;
+}
+.page-header h2 {
+    font-size: 1.2rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.page-actions button, .page-actions a {
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    margin-left: 10px;
+}
+.btn-salvar {
+    background-color: #0d6efd; /* Azul */
+    color: white;
+}
+.btn-cancelar {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+}
+
+.form-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    align-items: flex-start; /* Alinha os itens no topo */
+}
+.form-main {
+    flex: 3; /* Ocupa 3/4 do espaço */
+    background-color: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 25px;
+}
+.form-sidebar {
+    flex: 1; /* Ocupa 1/4 do espaço */
+    background-color: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 25px;
+    min-width: 0;
+}
+.form-section {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.form-section h4 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+    font-size: 13px;
+}
+.form-group input, .form-group select, .form-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+}
+/* Ajustes de tamanho dos campos */
+.form-group.small { flex: 0.5; }
+.form-group.large { flex: 2; }
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Sidebar de Anexos */
+.btn-anexar {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745; /* Verde */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-decoration: none;
+    font-size: 15px;
+}
+.file-list ul {
+    list-style: none;
+    padding: 0;
+}
+.file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+.file-list li span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    word-break: break-all;
+}
+.file-list li .fa-file-pdf { color: #dc3545; }
+.file-list li .fa-cog { cursor: pointer; color: #555; }
+
+
+/* --- 7. ESTILOS DO PREVIEW DE ARQUIVO (APÓLICES) --- */
+
+/* Esconde a lista <ul> antiga da tela de cliente */
+.form-sidebar .file-list ul {
+    display: none;
+}
+
+/* O novo container em grid */
+.file-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 coluna */
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.file-preview-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 10px;
+    position: relative; 
+    background-color: #f8f9fa;
+    gap: 10px;
+    /* Adicionado para garantir que a caixa não quebre */
+    overflow: hidden; 
+}
+
+/* --- Ícone Grande do Tipo de Arquivo --- */
+.file-preview-box .preview-icon {
+    font-size: 2.5rem;
+    width: 50px;
+    text-align: center;
+    color: #555;
+    /* Impede o ícone de encolher */
+    flex-shrink: 0; 
+}
+.file-preview-box .preview-icon .fa-file-pdf { color: #dc3545; }
+.file-preview-box .preview-icon .fa-file-image { color: #0d6efd; }
+.file-preview-box .preview-icon .fa-file-word { color: #0b5ed7; }
+
+/* --- Informações do Arquivo (Link Principal) --- */
+.file-preview-box .preview-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1; 
+    text-decoration: none; 
+    color: inherit; 
+    overflow: hidden; 
+    padding-right: 60px; 
+    
+    /* ----- CORREÇÃO 1 ----- */
+    min-width: 0; /* Permite que o link encolha */
+}
+
+.file-preview-box .preview-info {
+    flex: 1;
+    overflow: hidden;
+    
+    /* ----- CORREÇÃO 2 ----- */
+    min-width: 0; /* Permite que o container de info encolha */
+}
+
+.file-preview-box .preview-info .file-name {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    
+    /* As regras do "..." que não estavam funcionando */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+/* --- ÍCONES DE AÇÃO (Lado Direito) --- */
+.file-preview-box .preview-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;  
+    align-items: center;
+    gap: 12px;
+    /* Garante que os ícones fiquem por cima */
+    background-color: #f8f9fa; 
+    padding-left: 5px;
+}
+
+/* Ícone de visualizar */
+.file-preview-box .file-view-icon {
+    cursor: pointer;
+    color: #555;
+    font-size: 15px;
+    transition: color 0.2s;
+}
+.file-preview-box .file-view-icon:hover {
+    color: #0d6efd; /* Azul */
+}
+
+/* Ícone de lixeira */
+.file-preview-box .file-delete-icon {
+    cursor: pointer;
+    color: #555;
+    font-size: 15px;
+    transition: color 0.2s;
+}
+.file-preview-box .file-delete-icon:hover {
+    color: #dc3545; /* Vermelho */
+}

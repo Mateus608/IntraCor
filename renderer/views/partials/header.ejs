@@ -1,0 +1,37 @@
+<header class="top-header">
+    <div class="logo-container">
+        <a href="/dashboard">
+            <img src="/img/LogoIntracor.png" alt="Intracor Logo" class="header-logo-intracor">
+        </a>
+    </div>
+
+    <div class="user-menu-container">
+        <div class="user-greeting">
+            <span>Olá, <%= locals.usuario || 'Usuário' %>!</span>
+        </div>
+
+        <div class="user-dropdown">
+            <button class="hamburger-button">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="dropdown-content">
+                <ul>
+                    <% if (locals.nivel==='admin' ) { %>
+                        <li>
+                            <a href="/admin/painel">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>Painel Admin</span>
+                            </a>
+                        </li>
+                        <% } %>
+                    <li>
+                        <a href="/logout">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+
+        <nav class="main-nav">
+            <ul>
+                <li class="active"><a href="/dashboard"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li><a href="/dashboard/apolices"><i class="fa-solid fa-file-invoice"></i> Apólices</a></li>
+                <li><a href="/dashboard/endossos"><i class="fa-solid fa-file-pen"></i> Endossos</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-signature"></i> Propostas</a></li>
+                <li><a href="/dashboard/sinistros"><i class="fa-solid fa-triangle-exclamation"></i> Sinistros</a></li>
+                <li><a href="#"><i class="fa-solid fa-calculator"></i> Orçamentos</a></li>
+            </ul>
+            <div class="quoteflex-logo-nav" style="background-color: #01212B;">
+                <img src="/img/LogoQuoteFlexBranco.png" alt="QuoteFlex Logo">
+            </div>
+        </nav>
+
+        <div class="filter-bar">
+            <div class="filter-left">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <select name="cia">
+                    <option value="">CIA</option>
+                    <option value="porto">Porto Seguro</option>
+                    <option value="azul">Azul Seguros</option>
+                </select>
+                <select name="ramo">
+                    <option value="">Ramo</option>
+                    <option value="auto">Auto</option>
+                    <option value="vida">Vida</option>
+                </select>
+                <button class="btn-filter">
+                    <i class="fa-solid fa-filter"></i> Filtros
+                </button>
+            </div>
+            <div class="filter-right">
+                <a href="/dashboard/clientes/incluir" class="btn-primary-incluir" style="text-decoration: none;">
+                    <i class="fa-solid fa-plus"></i> Incluir
+                </a>
+            </div>
+        </div>
+
+        <main class="content-area">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr class="tr-pai">
+                            <th>Nome</th>
+                            <th>Contato</th>
+                            <th>CPF</th>
+                            <th>CNPJ</th>
+                            <!--<th>Preposto</th>-->
+                            <th style="display: flex; align-items: center; justify-content: center;"><img src="/img/EstrelaPrincipal.png" class="star-icon-principal"></th> 
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (clientes && clientes.length > 0) { %>
+                            <% clientes.forEach(cliente => { %>
+                            <tr>
+                                <td><%= cliente.nome %></td>
+                                <td><%= cliente.meio_comunic %></td>
+                                <td><%= cliente.cpf %></td>
+                                <td><%= cliente.cnpj %></td>
+                                <!--<td><%= cliente.preposto %></td>-->
+                                <td>
+                                    <div class="star-column">
+                                    <img src="/img/EstrelaMenor.png" alt="Não Favorito" class="star-icon">
+                                    </div>
+                                </td>
+                                <td class="action-column">
+                                    <a href="/cliente/<%= cliente.cliente_id %>">
+                                        <img src="/img/IconePasta.png" alt="Acessar" class="action-icon">
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" style="text-align: center;">Nenhum cliente encontrado</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+</html>
