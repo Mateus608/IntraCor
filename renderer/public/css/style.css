@@ -458,3 +458,48 @@ html, body {
     max-width: 200px; 
     height: auto; 
 }
+
+.periodo-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: "Inter", Arial, sans-serif;
+    color: #333;
+    margin: 1rem 0;
+  }
+
+  .inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .inputs input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .inputs input[type="date"]:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    outline: none;
+  }
+
+  .inputs .ate {
+    font-weight: 500;
+    color: #555;
+  }
+
+  /* Responsivo para telas menores */
+  @media (max-width: 500px) {
+    .inputs {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .inputs .ate {
+      display: none;
+    }
+  }

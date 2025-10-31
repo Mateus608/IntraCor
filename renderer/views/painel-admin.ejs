@@ -97,8 +97,15 @@
 
             <div id="tab-relatorios" class="tab-content">
                 <h3>Relatórios</h3>
-                <p>Selecione os parâmetros para gerar o relatório.</p>
-                <button class="btn-include"><i class="fa-solid fa-file-excel"></i> Gerar Relatório (Excel)</button>
+                <div class="periodo-container">
+  <label for="data">Selecione o período</label>
+  <div class="inputs">
+    <input type="date" id="data-inicio" name="data-inicio">
+    <span class="ate">Até</span>
+    <input type="date" id="data-fim" name="data-fim">
+  </div>
+</div>
+                <button class="btn-include"><i class="fa-solid fa-file-pdf"></i> Gerar Relatório</button>
             </div>
 
         </main>

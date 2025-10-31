@@ -22,7 +22,7 @@ router.post('/login', (req, res) => {
     
     const query = `
        select us.cd_usu_bd
-            , tau.descr     cd_tpacessusu 
+            , tau.descr     descr_tpacessusu 
          from usuario       us
             , tp_acesso_usu tau
         where us.tpacessusu_id = tau.tpacessusu_id
@@ -41,7 +41,7 @@ router.post('/login', (req, res) => {
            req.session.usuario = user.cd_usu_bd;
            
            // AQUI ESTÁ A CORREÇÃO FINAL:
-           req.session.nivel = user.cd_tpacessusu.toLowerCase(); // Converte 'ADMIN' para 'admin'
+           req.session.nivel = user.descr_tpacessusu.toLowerCase(); // Converte 'ADMIN' para 'admin'
 
            db.query(
                 'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
