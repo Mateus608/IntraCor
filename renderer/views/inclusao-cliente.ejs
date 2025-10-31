@@ -42,9 +42,7 @@
                         <div class="form-group">
                             <label for="preposto">Preposto</label>
                             <select id="preposto">
-                                <option value="medico" selected>Médico</option>
-                                <option value="engenheiro">Engenheiro</option>
-                                <option value="advogado">Advogado</option>
+                                <option value="">Carregando usuários...</option>
                             </select>
                         </div>
                     </div>
@@ -66,12 +64,9 @@
                             <input type="text" id="nascimento" value="00/00/0000">
                         </div>
                          <div class="form-group">
-                            <label for="grupo-economico">Grupo Econômico</label>
-                            <select id="grupo-economico">
-                                <option value="1">Outro</option>
-                                <option value="soufer" selected>Soufer</option>
-                                <option value="unifeob" selected>Unifeob</option>
-                                <option value="semprevale" selected>Sempre Vale</option>
+                            <label for="grupoEconomico">Grupo Econômico</label>
+                            <select id="grupoEconomico">
+                                <option value="">Carregando grupos economicos...</option>
                             </select>
                         </div>
                     </div>
@@ -95,10 +90,8 @@
                         </div>
                         <div class="form-group">
                             <label for="cidade">Cidade</label>
-                            <select id="uf">
-                                <option value="SP" selected>SP</option>
-                                <option value="MG">MG</option>
-                                <option value="RJ">RJ</option>
+                            <select id="cidade">
+                                <option value="">Carregando cidades...</option>
                             </select>
                         </div>
                     </div>
@@ -128,6 +121,112 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarUsuarios(), 
+            carregarGrEconomico(), 
+            carregarCidades();
+        });
+
+        //PREPOSTO
+        async function carregarUsuarios() {
+            try {
+                const response = await fetch('/usuario/getUsuList');
+                const data = await response.json();
+                
+                if (data.success && data.usuarios) {
+                    preencherSelectUsuarios(data.usuarios);
+                } else {
+                    console.error('Erro ao carregar usuários:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectUsuarios(usuarios) {
+            const selectPreposto = document.getElementById('preposto');
+            
+            selectPreposto.innerHTML = '<option value="">Selecione um preposto</option>';
+            
+            usuarios.forEach(usuario => {
+                const option = document.createElement('option');
+                option.value = usuario.usuario_id;
+                option.textContent = usuario.nome;
+                selectPreposto.appendChild(option);
+            });
+
+            document.getElementById('preposto').addEventListener('change', function() {
+                const usuario_id = this.value;
+            });
+        }
+        
+        //GRUPOECONOMICO
+        async function carregarGrEconomico() {
+            try {
+                const response = await fetch('/cliente/getGrEconomico');
+                const data = await response.json();
+                
+                if (data.success && data.grEconomicos) {
+                    preencherSelectGrEconomico(data.grEconomicos);
+                } else {
+                    console.error('Erro ao carregar Grupos Econômicos:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectGrEconomico(grEconomicos) {
+            const selectGrEconomico = document.getElementById('grupoEconomico');
+            
+            selectGrEconomico.innerHTML = '<option value="">Selecione um grupo econômico</option>';
+            
+            grEconomicos.forEach(grEconomico => {
+                const option = document.createElement('option');
+                option.value = grEconomico.greconomico_id;
+                option.textContent = grEconomico.descr;
+                selectGrEconomico.appendChild(option);
+            });
+
+            document.getElementById('grupoEconomico').addEventListener('change', function() {
+                const greconomico_id = this.value;
+            });
+        }
+
+        //CIDADE
+        async function carregarCidades() {
+            try {
+                const response = await fetch('/cliente/getCidade');
+                const data = await response.json();
+                
+                if (data.success && data.cidades) {
+                    preencherSelectCidades(data.cidades);
+                } else {
+                    console.error('Erro ao carregar Cidades:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectCidades(cidades) {
+            const selectCidades = document.getElementById('cidade');
+            
+            selectCidades.innerHTML = '<option value="">Selecione uma cidade </option>';
+            
+            cidades.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade.cidade_id;
+                option.textContent = cidade.descr_cidade;
+                selectCidades.appendChild(option);
+            });
+
+            document.getElementById('cidade').addEventListener('change', function() {
+                const cidade_id = this.value;
+            });
+        }
+
+        // ARQUIVOS DO CLIENTE
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- 1. Seleciona os elementos ---
@@ -201,8 +300,66 @@
                 }
             }
             
-            //requisita cliente ( Criação ) 
         });
+
+        //INSERE CLIENTE
+        document.querySelector('.btn-salvar').addEventListener('click', function(e) {
+            e.preventDefault();
+            salvarCliente();
+        });
+
+        async function salvarCliente() {
+            
+            const dadosCliente = {
+                nome: document.getElementById('cliente').value,
+                telefone: document.getElementById('telefone').value,
+                cpf: document.getElementById('cpf').value,
+                usuprep_id: document.getElementById('preposto').value,
+                email: document.getElementById('email').value,
+                profissao: document.getElementById('profissao').value,
+                dt_nasc: document.getElementById('nascimento').value,
+                greconomico_id: document.getElementById('grupoEconomico').value,
+                descr_ender: document.getElementById('logradouro').value,
+                nro_ender: document.getElementById('numero').value,
+                bairro_ender: document.getElementById('bairro').value,
+                cidade_id: document.getElementById('cidade').value,
+                obs: document.getElementById('observacoes').value
+            };
+
+            if (!dadosCliente.nome || dadosCliente.nome === 'Nome Completo') {
+                alert('Por favor, informe o nome do cliente');
+                return;
+            }
+
+            /*if (!dadosCliente.preposto_id) {
+                alert('Por favor, selecione um preposto');
+                return;
+            }*/
+
+            try {
+                console.log('Enviando dados:', dadosCliente);
+                
+                const response = await fetch('/cliente/incCliente', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosCliente)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Cliente salvo com sucesso!');
+                    window.location.href = '/dashboard'; // Redireciona para dashboard
+                } else {
+                    alert('Erro ao salvar cliente: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão ao salvar cliente');
+            }
+        }
     </script>
 </body>
 </html>

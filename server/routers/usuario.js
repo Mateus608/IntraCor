@@ -23,4 +23,24 @@ router.post('/incUsuario', (req, res) => {
     });
 });
 
+router.get('/getUsuList', (req, res) => {
+    const query = `SELECT us.nome, us.usuario_id, us.cd_usu_bd, us.senha FROM usuario us where us.sit = 1 order by us.nome`;
+    
+    db.execute(query, (error, results) => {
+        if (error) {
+            console.error('Erro ao buscar usuarios: ', error);
+            return res.status(500).json({ 
+                error: 'Erro ao buscar usuários no banco de dados',
+                details: error.message
+            });
+        }
+
+        // Retorna JSON em vez de renderizar a view
+        res.json({
+            success: true,
+            usuarios: Array.isArray(results) ? results : []
+        });
+    });
+});
+
 module.exports = router

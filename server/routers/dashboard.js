@@ -3,7 +3,7 @@ const router = express.Router()
 const db = require('../db')
 
 router.get('/', (req, res) => {
-    const query = 'SELECT vc.pessoa_id, vc.nome, vc.descr, vc.cnpj, vc.cpf, vc.cliente_id FROM v_clientes vc';
+    const query = 'SELECT vc.pessoa_id, vc.nome, vc.email, vc.telefone, vc.cnpj, vc.cpf, vc.cliente_id, vc.preposto_clie FROM v_clientes vc';
     
     db.execute(query, (error, results) => {
         if (error) {
@@ -15,10 +15,12 @@ router.get('/', (req, res) => {
 
         const clientesFormatados = results.map(cliente => ({
             nome: cliente.nome,
-            meio_comunic: cliente.descr,
+            email: cliente.email,
+            telefone: cliente.telefone,
             cpf: cliente.cpf,
             cnpj: cliente.cnpj,
-            cliente_id: cliente.cliente_id
+            cliente_id: cliente.cliente_id,
+            preposto_clie: cliente.preposto_clie
         }));
 
         res.render('dashboard', {
@@ -59,7 +61,7 @@ router.get('/sinistros', (req, res) => {
 });
 
 router.get('/clientes/incluir', (req, res) => {
-    res.render('inclusao-cliente', { // Nome do novo arquivo EJS
+    res.render('inclusao-cliente', {
         usuario: req.session.usuario,
         nivel: req.session.nivel
     });

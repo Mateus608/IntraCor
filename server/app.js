@@ -3,9 +3,19 @@ const path = require('path')
 const session = require('express-session')
 const app = express()
 const adminRouter = require('./routers/admin'); 
+const authRouter = require('./routers/auth')
+const dashboardRouter = require('./routers/dashboard')
+const usuariosRouter = require('./routers/usuario')
+const clienteRouter  = require('./routers/cliente')
+
+app.listen(4040, ()=>{
+    console.log('Servidor inicializado em http://localhost:4040')
+})
 
 app.set('view engine' ,'ejs')
 app.set('views', path.join(__dirname, '../renderer/views'))
+
+app.use(express.json())
 app.use(express.static(path.join(__dirname, '../renderer/public')))
 app.use(express.urlencoded({extended: false}))
 
@@ -15,14 +25,18 @@ app.use(session({
     saveUninitialized: false,
 }))
 
-const authRouter = require('./routers/auth')
-const dashboardRouter = require('./routers/dashboard')
+// ROTAS
 
 app.use('/', authRouter)
+
+//usuario
+app.use('/usuario', usuariosRouter)
+
+//cliente
+app.use('/cliente', clienteRouter)
+
+// dashboard
 app.use('/dashboard', dashboardRouter)
 
-app.listen(4040, ()=>{
-    console.log('Servidor inicializado em http://localhost:4040')
-})
-
+// admin
 app.use('/admin', adminRouter); 

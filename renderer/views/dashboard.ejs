@@ -59,7 +59,8 @@
                     <thead>
                         <tr class="tr-pai">
                             <th>Nome</th>
-                            <th>Contato</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
                             <th>CPF</th>
                             <th>CNPJ</th>
                             <th>Preposto</th>
@@ -72,10 +73,11 @@
                             <% clientes.forEach(cliente => { %>
                             <tr>
                                 <td><%= cliente.nome %></td>
-                                <td><%= cliente.meio_comunic %></td>
+                                <td><%= cliente.email %></td>
+                                <td><%= cliente.telefone %></td>
                                 <td><%= cliente.cpf %></td>
                                 <td><%= cliente.cnpj %></td>
-                                <td><%= cliente.preposto %></td>
+                                <td><%= cliente.preposto_clie%></td>
                                 <td>
                                     <div class="star-column">
                                     <img src="/img/EstrelaMenor.png" alt="Não Favorito" class="star-icon">
