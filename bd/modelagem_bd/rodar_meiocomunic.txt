@@ -1,0 +1,14 @@
+DELIMITER //
+
+CREATE TRIGGER trg_ins_contato_obrigatorio
+BEFORE INSERT ON meio_comunic
+FOR EACH ROW
+BEGIN
+    IF NEW.email IS NULL AND NEW.telefone IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Pelo menos uma das colunas (email ou telefone) deve ser preenchida.';
+    END IF;
+END;
+//
+
+DELIMITER ;
