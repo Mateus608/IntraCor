@@ -231,19 +231,19 @@ router.post('/incluir', validarCPF, (req, res) => {
 
                 db.query(
                     'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
-                    [usu_session, 'Inseriu novo cliente: '||paramsPessoa.nome],
+                    [usu_session, `Cadastrou Cliente: ${req.body.nome}`],
                     (logErr) => {
-                        if (logErr) console.error("Erro ao registrar log de inserção de cliente: ", logErr); 
+                        if (logErr) {
+                            console.error("Erro ao registrar log de cadastro de Cliente: ", logErr);
+                        }
+                        
+                        res.json({
+                            success: true,
+                            message: 'Cliente cadastrado com sucesso'
+                        });
                     }
                 );
 
-                res.json({
-                    success: true,
-                    message: 'Cliente salvo com sucesso',
-                    pessoa_id: pessoa_id,
-                    cliente_id: resultsCliente.insertId,
-                    cpf_formatado: cpfValidado
-                });
             });
         });
     });
@@ -321,7 +321,7 @@ router.put('/atlzCliente', validarCPF, (req, res) => {
 
         db.query(
             'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
-            [usu_session, 'Alterou cliente: '||paramCliente.nome],
+            [usu_session, `Alterou cliente: ${req.body.nome}`],
             (logErr) => {
                 if (logErr) console.error("Erro ao registrar log de alteração de cliente: ", logErr); 
             }
@@ -337,7 +337,7 @@ router.put('/atlzCliente', validarCPF, (req, res) => {
 
 router.put('/excluir', (req, res ) => {
    const cliente_id = req.body.clienteId;
-
+//alterar e adicionar para excluir pf e pessoa_id através do pessoa_id
    if (!cliente_id){
         return res.status(400).json({
             success: false,
@@ -362,7 +362,7 @@ router.put('/excluir', (req, res ) => {
 
         db.query(
             'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
-            [usu_session, 'Excluiu cliente: '||cliente_id],
+            [usu_session, `Excluiu cliente: ${cliente_id} `],
             (logErr) => {
                 if (logErr) console.error("Erro ao registrar log de exclusão de cliente: ", logErr); 
             }

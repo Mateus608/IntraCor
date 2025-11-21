@@ -46,10 +46,23 @@ router.post('/incUsuario', (req, res) => {
             });
         }
 
-        res.json({
-            success: true,
-            message: 'Usuário cadastrado com sucesso!',
-        });
+        //Insere Log_Auditoria
+        const usu_session = req.session.usuario;
+
+        db.query(
+            'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
+            [usu_session, `Cadastrou usuário: ${req.body.nome}`],
+            (logErr) => {
+                if (logErr) {
+                    console.error("Erro ao registrar log de inclusão de usuario: ", logErr);
+                }
+                
+                res.json({
+                    success: true,
+                    message: 'Usuário cadastrado com sucesso'
+                });
+            }
+        );
 
     });
 });
@@ -76,10 +89,23 @@ router.put('/altUsuario', (req, res) => {
             });
         }
 
-        res.json({
-            success: true,
-            message: 'Usuario alterado com sucesso'
-        });
+        //Insere Log_Auditoria
+        const usu_session = req.session.usuario;
+
+        db.query(
+            'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
+            [usu_session, `Alterou usuário: ${req.body.nome}`],
+            (logErr) => {
+                if (logErr) {
+                    console.error("Erro ao registrar log de alteração de usuario: ", logErr);
+                }
+                
+                res.json({
+                    success: true,
+                    message: 'Usuário alterado com sucesso'
+                });
+            }
+        );
     
     });
 });
@@ -107,18 +133,21 @@ router.put('/excluir', (req, res ) => {
 
         db.query(
             'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
-            [usu_session, 'Excluiu cliente: ', usuario_id],
+            [usu_session, `Excluiu usuário: ${usuario_id}`],
             (logErr) => {
-                if (logErr) console.error("Erro ao registrar log de exclusão de cliente: ", logErr); 
+                if (logErr) {
+                    console.error("Erro ao registrar log de exclusão de usuario: ", logErr);
+                }
+                
+                res.json({
+                    success: true,
+                    message: 'Usuário excluído com sucesso'
+                });
             }
         );
 
     });
 
-    res.json({
-            success: true,
-            message: 'Usuário excluído com sucesso'
-    });
 });
 
 router.get('/getUsuList', (req, res) => {
