@@ -6,9 +6,7 @@
     <title>Painel Admin - Intracor</title>
     
     <link rel="stylesheet" href="/css/style.css"> 
-    
     <link rel="stylesheet" href="/css/admin.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
@@ -28,7 +26,7 @@
             <div id="tab-logs" class="tab-content active">
                 <h3>Logs do Sistema</h3>
                 <div class="table-container">
-                    <table class="data-table">
+                    <table class="data-table" id="table-logs">
                         <thead>
                             <tr>
                                 <th>Usuário</th>
@@ -37,59 +35,43 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% if (logs && logs.length > 0) { %>
-                                <% logs.forEach(log => { %>
-                                    <tr>
-                                        <td><%= log.usuario %></td>
-                                        <td><%= log.acao %></td>
-                                        <td><%= new Date(log.timestamp).toLocaleString('pt-BR') %></td>
-                                    </tr>
-                                <% }) %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="3" style="text-align: center;">Nenhum log encontrado.</td>
-                                </tr>
-                            <% } %>
+                            <tr>
+                                <td colspan="3" style="text-align: center;">Carregando logs...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div id="tab-usuarios" class="tab-content">
-                <h3>Usuários do Sistema</h3>
-                    <a href="/admin/usuarios/novo" class="btn-include">
-                        <i class="fa-solid fa-plus"></i> Adicionar Usuário
-                    </a>
-                    
-                    <div class="table-container">
+                <div class="row">
+                    <div class="col-sm">
+                        <h3>Usuários do Sistema</h3>
                     </div>
+                    <div class="col-sm" style="text-align: right">
+                        <a href="/usuario/incluir">
+                            <button class="btn-include">
+                                <i class="fa-solid fa-plus"></i> Adicionar Usuário
+                            </button>
+                        </a>
+                    </div>
+                </div>
                 
                 <div class="table-container">
-                    <table class="data-table">
+                    <table class="data-table" id="table-usuarios">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>#</th>
                                 <th>Nome</th>
                                 <th>Login (cd_usu_bd)</th>
                                 <th>Nível</th>
-                                <th>Ações</th>
+                                <th>Função</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% if (users && users.length > 0) { %>
-                                <% users.forEach(user => { %>
-                                    <tr>
-                                        <td><%= user.usuario_id %></td>
-                                        <td><%= user.nome %></td>
-                                        <td><%= user.cd_usu_bd %></td>
-                                        <td><%= user.nivel %></td>
-                                        <td>
-                                            <button class="btn-action btn-edit"><i class="fa-solid fa-pencil"></i> Alterar</button>
-                                            <button class="btn-action btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
-                                        </td>
-                                    </tr>
-                                <% }) %>
-                            <% } %>
+                            <tr>
+                                <td colspan="5" style="text-align: center;">Carregando usuarios...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -98,13 +80,13 @@
             <div id="tab-relatorios" class="tab-content">
                 <h3>Relatórios</h3>
                 <div class="periodo-container">
-  <label for="data">Selecione o período</label>
-  <div class="inputs">
-    <input type="date" id="data-inicio" name="data-inicio">
-    <span class="ate">Até</span>
-    <input type="date" id="data-fim" name="data-fim">
-  </div>
-</div>
+                    <label for="data">Selecione o período</label>
+                    <div class="inputs">
+                        <input type="date" id="data-inicio" name="data-inicio">
+                        <span class="ate">Até</span>
+                        <input type="date" id="data-fim" name="data-fim">
+                    </div>
+                </div>
                 <button class="btn-include"><i class="fa-solid fa-file-pdf"></i> Gerar Relatório</button>
             </div>
 
@@ -112,6 +94,11 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarAuditoriaLogs();
+            carregarUsuarios();
+        });
+        
         function openTab(evt, tabName) {
             // Esconde todos os conteúdos
             const tabcontent = document.getElementsByClassName("tab-content");
@@ -130,6 +117,78 @@
             document.getElementById(tabName).style.display = "block";
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
+        }
+
+        async function carregarAuditoriaLogs() {
+            try {
+                const response = await fetch('/admin/getLogsAuditoria');
+                const data = await response.json();
+                
+                console.log('Logs:', data);
+
+                if (data.success) {
+                    atualizarTabelaLogs(data.logsAuditoria);
+                } else {
+                    console.error('Erro ao carregar logs de auditoria:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro: ', error);
+            }
+        }
+
+        function atualizarTabelaLogs(logsAuditoria) {
+            const tbody = document.querySelector('#table-logs tbody');
+            
+            if (logsAuditoria && logsAuditoria.length > 0) {
+                tbody.innerHTML = logsAuditoria.map(log => `
+                    <tr>
+                        <td>${log.usuario || 'N/A'}</td>
+                        <td>${log.acao || 'N/A'}</td>
+                        <td>${log.dt_ref || 'N/A'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Nenhum log de auditoria encontrado!</td></tr>';
+            }
+        }
+
+        async function carregarUsuarios() {
+            try {
+                const response = await fetch('/usuario/getUsuarios');
+                const data = await response.json();
+                
+                console.log('Usuários:', data);
+
+                if (data.success) {
+                    atualizarTabelaUsuarios(data.usuarios);
+                } else {
+                    console.error('Erro ao carregar usuarios:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro: ', error);
+            }
+        }
+
+        function atualizarTabelaUsuarios(usuarios) {
+            const tbody = document.querySelector('#table-usuarios tbody');
+            
+            if (usuarios && usuarios.length > 0) {
+                tbody.innerHTML = usuarios.map(usuario => `
+                    <tr>
+                        <td>
+                            <a href="/usuario/alterar/${usuario.usuario_id}">
+                                <span class="fa fa-edit" style="text-align: center; color:blue"></span>
+                            </a>
+                        </td>
+                        <td>${usuario.nome || 'N/A'}</td>
+                        <td>${usuario.cd_usu_bd || 'N/A'}</td>
+                        <td>${usuario.descr_tpacessusu || 'N/A'}</td>
+                        <td>${usuario.descr_funcaousu || 'N/A'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum usuário encontrado!</td></tr>';
+            }
         }
     </script>
 </body>

@@ -15,8 +15,9 @@
         <header class="page-header">
             <h2><i class="fa-solid fa-user-plus"></i> Inclusão de Usuário</h2>
             <div class="page-actions">
-                 <button class="btn-salvar" id="btn-salvar-usuario"><i class="fa-solid fa-save"></i> Salvar</button>
-                 <a href="/admin/painel" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+                <button class="btn-excluir"><i class="fa-solid fa-trash"></i> Excluir </button>
+                <button class="btn-salvar"><i class="fa-solid fa-save"></i> Salvar</button>
+                <a href="/admin/painel" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
             </div>
         </header>
 
@@ -40,17 +41,21 @@
                     <h4>Permissões e Acesso</h4>
                      <div class="form-row">
                         <div class="form-group">
-                            <label for="nivel">Nível de Acesso</label>
-                            <select id="nivel">
-                                <option value="user">Usuário Padrão</option> 
-                                <option value="admin">Administrador</option>
+                            <label for="tpAcesso">Tipo acesso</label>
+                            <select id="tpAcesso">
+                                <option value="">Carregando tipos de acesso...</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="situacao">Situação</label>
-                            <select id="situacao">
-                                <option value="1">Ativo</option>
-                                <option value="0">Inativo</option>
+                            <label for="funcaoUsu">Função</label>
+                            <select id="funcaoUsu">
+                                <option value="">Carregando funções...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sit">Situação</label>
+                            <select id="sit">
+                                <option value="">Carregando Situações...</option>
                             </select>
                         </div>
                     </div>
@@ -78,10 +83,26 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarTpAcesso();
+            carregarFuncaoUsu();
+            carregarSit();
             
-            // --- 1. LÓGICA DE VALIDAÇÃO (DO BOTÃO SALVAR) ---
-            document.getElementById('btn-salvar-usuario').addEventListener('click', () => {
+            const urlParts = window.location.pathname.split('/');
+            const usuarioId = urlParts[urlParts.length - 1];
+
+            if (usuarioId && usuarioId !== 'incluir' && usuarioId !== 'alterar') {
+                carregarDadosUsuario(usuarioId);
+                document.querySelector('h2').innerHTML = '<i class="fa-solid fa-edit"></i> Alteração de Usuario';
+            
+                document.querySelector('.btn-excluir').style.display = 'inline-block';
+            } else {
+                document.querySelector('.btn-excluir').style.display = 'none';
+            }
+
+            console.log('Id usuario capturado: ', usuarioId);
+
+            document.querySelector('.btn-salvar').addEventListener('click', () => {
                 const senha = document.getElementById('senha').value;
                 const confirmarSenha = document.getElementById('confirmar-senha').value;
                 const errorMessage = document.getElementById('error-message');
@@ -99,47 +120,306 @@
                 }
 
                 errorMessage.style.display = 'none';
-                alert('Validação do Front-end OK! (Aqui o backend faria o POST para o banco)');
+            });
+        });
+
+        async function carregarTpAcesso() {
+            try {
+                const response = await fetch('/usuario/getTpAcesso');
+                const data = await response.json();
+                
+                if (data.success && data.tpsAcesso) {
+                    preencherSelectTpAcesso(data.tpsAcesso);
+                } else {
+                    console.error('Erro ao carregar Tipo função:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectTpAcesso(tpsAcesso) {
+            const selectTpAcesso = document.getElementById('tpAcesso');
+            
+            selectTpAcesso.innerHTML = '<option value="">Selecione um tipo de acesso</option>';
+            
+            tpsAcesso.forEach(tpAcesso => {
+                const option = document.createElement('option');
+                option.value = tpAcesso.tpacessusu_id;
+                option.textContent = tpAcesso.descr;
+                selectTpAcesso.appendChild(option);
             });
 
+            document.getElementById('tpAcesso').addEventListener('change', function() {
+                const tpacessusu_id = this.value;
+            });
+        }
 
-            // --- 2. LÓGICA DE MOSTRAR/OCULTAR SENHA (NOVO) ---
-            
-            // Seleciona os elementos
-            const senhaInput = document.getElementById('senha');
-            const toggleSenhaIcon = document.getElementById('toggle-senha');
-
-            const confirmarSenhaInput = document.getElementById('confirmar-senha');
-            const toggleConfirmarSenhaIcon = document.getElementById('toggle-confirmar-senha');
-
-            // Função reutilizável para o toggle
-            function togglePassword(input, icon) {
-                // Verifica o tipo do input
-                if (input.type === 'password') {
-                    // Muda para texto
-                    input.type = 'text';
-                    // Muda o ícone para "olho cortado" (slash)
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
+        async function carregarFuncaoUsu() {
+            try {
+                const response = await fetch('/usuario/getFuncaoUsu');
+                const data = await response.json();
+                
+                if (data.success && data.funcaoUsu) {
+                    preencherSelectFuncaoUsu(data.funcaoUsu);
                 } else {
-                    // Muda para senha
-                    input.type = 'password';
-                    // Muda o ícone de volta para "olho"
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
+                    console.error('Erro ao carregar funções do usuário:', data.error);
                 }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectFuncaoUsu(funcaoUsu) {
+            const selectFuncaoUsu = document.getElementById('funcaoUsu');
+            
+            selectFuncaoUsu.innerHTML = '<option value="">Selecione uma função</option>';
+            
+            funcaoUsu.forEach(funcao => {
+                const option = document.createElement('option');
+                option.value = funcao.funcaousu_id;
+                option.textContent = funcao.descr;
+                selectFuncaoUsu.appendChild(option);
+            });
+
+            document.getElementById('funcaoUsu').addEventListener('change', function() {
+                const funcaousu_id = this.value;
+            });
+        }
+
+        function preencherSelectSit(dominio) {
+            const selectSit = document.getElementById('sit');
+            
+            selectSit.innerHTML = '<option value="">Selecione uma situação </option>';
+            
+            dominio.forEach(dominios => {
+                const option = document.createElement('option');
+                option.value = dominios.vlr;
+                option.textContent = dominios.descr;
+                selectSit.appendChild(option);
+            });
+
+            document.getElementById('sit').addEventListener('change', function() {
+                const sit = this.value;
+            });
+        }
+
+        async function carregarSit() {
+            try {
+                const response = await fetch('/usuario/getSit');
+                const data = await response.json();
+                
+                if (data.success && data.dominio) {
+                    preencherSelectSit(data.dominio);
+                } else {
+                    console.error('Erro ao carregar situações:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        // --- 2. LÓGICA DE MOSTRAR/OCULTAR SENHA (NOVO) ---
+        
+        // Seleciona os elementos
+        const senhaInput = document.getElementById('senha');
+        const toggleSenhaIcon = document.getElementById('toggle-senha');
+
+        const confirmarSenhaInput = document.getElementById('confirmar-senha');
+        const toggleConfirmarSenhaIcon = document.getElementById('toggle-confirmar-senha');
+
+        // Função reutilizável para o toggle
+        function togglePassword(input, icon) {
+            // Verifica o tipo do input
+            if (input.type === 'password') {
+                // Muda para texto
+                input.type = 'text';
+                // Muda o ícone para "olho cortado" (slash)
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                // Muda para senha
+                input.type = 'password';
+                // Muda o ícone de volta para "olho"
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Adiciona os event listeners nos ícones
+        toggleSenhaIcon.addEventListener('click', () => {
+            togglePassword(senhaInput, toggleSenhaIcon);
+        });
+
+        toggleConfirmarSenhaIcon.addEventListener('click', () => {
+            togglePassword(confirmarSenhaInput, toggleConfirmarSenhaIcon);
+        });
+
+        document.querySelector('.btn-salvar').addEventListener('click', function(e) {
+            e.preventDefault();
+            salvarUsuario();
+        });
+
+        document.querySelector('.btn-excluir').addEventListener('click', function(e) {
+            e.preventDefault();
+            excluirUsuario();
+        });
+
+        async function salvarUsuario() {
+            const urlParts = window.location.pathname.split('/');
+            const usuarioId = urlParts[urlParts.length - 1];
+            
+            const dadosUsuario = {
+                nome: document.getElementById('nome').value,
+                cd_usu_bd: document.getElementById('cd-usu-bd').value,
+                funcaousu_id: document.getElementById('funcaoUsu').value,
+                tpacessusu_id: document.getElementById('tpAcesso').value,
+                senha: document.getElementById('senha').value || null,
+                sit: document.getElementById('sit').value,
+                usuario_id: usuarioId
+            };
+            
+            // Validações básicas
+            if (!dadosUsuario.nome || dadosUsuario.nome === 'Nome do usuário') {
+                alert('Por favor, informe o nome do usuário');
+                return;
             }
 
-            // Adiciona os event listeners nos ícones
-            toggleSenhaIcon.addEventListener('click', () => {
-                togglePassword(senhaInput, toggleSenhaIcon);
-            });
+            if (!dadosUsuario.cd_usu_bd || dadosUsuario.cd_usu_bd === 'usuario.login') {
+                alert('Por favor, informe um código de acesso!');
+                return;
+            }
 
-            toggleConfirmarSenhaIcon.addEventListener('click', () => {
-                togglePassword(confirmarSenhaInput, toggleConfirmarSenhaIcon);
-            });
+            if (!dadosUsuario.funcaousu_id) {
+                alert('Por favor, informe uma função');
+                return;
+            }
 
-        });
+            if (!dadosUsuario.tpacessusu_id) {
+                alert('Por favor, informe um tipo de acesso');
+                return;
+            }
+
+            if (!dadosUsuario.sit){
+                alert('Por favor, informe uma situação para este usuario!');
+                return;
+            }
+
+            try {
+                let url, method;
+                
+                if (usuarioId && usuarioId !== 'incluir' && usuarioId !== 'alterar') {
+                    dadosUsuario.usuario_id = usuarioId;
+                    url = '/usuario/altUsuario';
+                    method = 'PUT';
+                } else {
+                    url = '/usuario/incUsuario';
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosUsuario)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    const isAlteracao = usuarioId && usuarioId !== 'incluir' && usuarioId !== 'alterar';
+                    alert(isAlteracao ? 'Usuario alterado com sucesso!' : 'Usuario salvo com sucesso!');
+                    window.location.href = '/admin/painel';
+                } else {
+                    alert('Erro ao salvar usuario: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar usuario: ' + error.message);
+            }
+        }
+
+        // Função para carregar dados do cliente específico
+        async function carregarDadosUsuario(usuarioId) {
+            
+            try {
+                const response = await fetch(`/usuario/getUsuario/${usuarioId}`);
+                const data = await response.json();
+                
+                if (data.success && data.usuario) {
+                    preencherFormulario(data.usuario);
+                } else {
+                    console.error('Erro ao carregar dados do usuario:', data.error);
+                    alert('Erro ao carregar dados do usuario');
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+        
+        // Função para preencher o formulário com os dados do cliente
+        async function preencherFormulario(usuario) {
+            
+            document.getElementById('nome').value = usuario.nome || '';
+            document.getElementById('cd-usu-bd').value = usuario.cd_usu_bd || '';
+            
+            await Promise.all([
+                carregarSit().then(() => {
+                    document.getElementById('sit').value = usuario.sit || '0';
+                    console.log('sit: ', usuario.sit)
+                }),
+                carregarTpAcesso().then(() => {
+                    document.getElementById('tpAcesso').value = usuario.tpacessusu_id;
+                    console.log('tpacessusu_id: ', usuario.tpacessusu_id);
+                }),
+                carregarFuncaoUsu().then(() => {
+                    document.getElementById('funcaoUsu').value = usuario.funcaousu_id;
+                    console.log('funcaousu_id: ', usuario.funcaousu_id);
+                }),
+            ]);
+            
+        }
+
+        async function excluirUsuario() {
+            
+            const urlParts = window.location.pathname.split('/');
+            const usuarioIdExcl = urlParts[urlParts.length - 1];
+            
+            console.log('Usuário para ser excluído: ', usuarioIdExcl);
+
+            try {
+                let url, method;
+                    
+                    url = '/usuario/excluir';
+                    method = 'PUT';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ usuario_id: usuarioIdExcl }) 
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Usuário excluído com sucesso!');
+                    window.location.href = '/admin/painel';
+                } else {
+                    alert('Erro ao excluir usuário: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao excluir usuário: ' + error.message);
+            }
+        }
     </script>
 </body>
 </html>

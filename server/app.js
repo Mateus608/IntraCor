@@ -1,12 +1,14 @@
-const express = require('express')
-const path = require('path')
-const session = require('express-session')
-const app = express()
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
+const app = express();
 const adminRouter = require('./routers/admin'); 
-const authRouter = require('./routers/auth')
-const dashboardRouter = require('./routers/dashboard')
-const usuariosRouter = require('./routers/usuario')
-const clienteRouter  = require('./routers/cliente')
+const authRouter = require('./routers/auth');
+const dashboardRouter = require('./routers/dashboard');
+const usuariosRouter = require('./routers/usuario');
+const clienteRouter  = require('./routers/cliente');
+const apolicesRouter = require('./routers/apolice');
+const endossosRouter = require('./routers/endosso');
 
 app.listen(4040, ()=>{
     console.log('Servidor inicializado em http://localhost:4040')
@@ -27,16 +29,21 @@ app.use(session({
 
 // ROTAS
 
-app.use('/', authRouter)
+app.use('/', authRouter);
 
 //usuario
-app.use('/usuario', usuariosRouter)
+app.use('/usuario', usuariosRouter);
 
 //cliente
-app.use('/cliente', clienteRouter)
+app.use('/clientes', clienteRouter);
 
 // dashboard
-app.use('/dashboard', dashboardRouter)
+app.use('/dashboard', dashboardRouter);
 
 // admin
 app.use('/admin', adminRouter); 
+
+// apolice
+app.use('/apolices', apolicesRouter);
+
+app.use('/endossos', endossosRouter);

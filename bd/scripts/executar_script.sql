@@ -140,4 +140,5 @@ INSERT INTO `quoteflex`.`dominio` (`dominio_id`, `descr`, `dominio`, `vlr`) VALU
 INSERT INTO `quoteflex`.`dominio` (`dominio_id`, `descr`, `dominio`, `vlr`) VALUES (14, 'ELÉTRICO', 'VEICULO.TP_COMBUST', 3);
 INSERT INTO `quoteflex`.`dominio` (`dominio_id`, `descr`, `dominio`, `vlr`) VALUES (15, 'PRÊMIO ADICIONAL ', 'ENDOSSO.TP_ALT', 0);
 INSERT INTO `quoteflex`.`dominio` (`dominio_id`, `descr`, `dominio`, `vlr`) VALUES (16, 'RESTITUIÇÃO', 'ENDOSSO.TP_ALT', 1);
-    
+INSERT INTO `quoteflex`.`dominio` (`dominio_id`,`dominio`, `descr`, `vlr` ) values (17, 'USUARIO.SIT', 'INATIVO', 0 );
+INSERT INTO `quoteflex`.`dominio` (`dominio_id`,`dominio`, `descr`, `vlr` ) values (18, 'USUARIO.SIT', 'ATIVO', 1 );    

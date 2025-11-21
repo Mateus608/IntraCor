@@ -5,7 +5,7 @@ const crypto = require('crypto');
 
 
 router.get('/',(req,res)=>{
-    res.render('login')
+    res.render('login');
 })
 
 router.post('/login', (req, res) => {
@@ -36,19 +36,16 @@ router.post('/login', (req, res) => {
         if (results.length > 0) {
            const user = results[0];
 
-           // --- INÍCIO DA LÓGICA DE SESSÃO ---
-           
            req.session.usuario = user.cd_usu_bd;
            
-           // AQUI ESTÁ A CORREÇÃO FINAL:
-           req.session.nivel = user.descr_tpacessusu.toLowerCase(); // Converte 'ADMIN' para 'admin'
+           req.session.nivel = user.descr_tpacessusu.toLowerCase();
 
            db.query(
                 'INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
                 [user.cd_usu_bd, 'login'],
                 (logErr) => {
                     if (logErr) console.error("Erro ao registrar log de login:", logErr);
-                    res.redirect('/dashboard');
+                    res.redirect('/clientes');  
                 }
             );
            // --- FIM DA LÓGICA DE SESSÃO ---

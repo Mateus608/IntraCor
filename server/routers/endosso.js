@@ -1,18 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../db')
 
-
-
-router.get('/endossos', (req, res) => {
-    res.render('endossos', {
+router.get('/',(req,res)=>{
+    res.render('endossos',{
         usuario: req.session.usuario,
         nivel: req.session.nivel
-    });
-});
+    })
+})
 
-router.get('/sinistros', (req, res) => {
-    res.render('sinistros', {
+router.get('/incluir', (req, res) => {
+    res.render('inclusao-endosso', { 
         usuario: req.session.usuario,
         nivel: req.session.nivel
     });

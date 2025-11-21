@@ -5,7 +5,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `pk_inc_pessoa`( IN ev_nome         
 														   , IN en_cnpj_dv 	    INT(2)
                                                            , IN ev_descr_ender  VARCHAR(300)
 														   , IN ev_bairro_ender VARCHAR(300)
-                                                           , IN en_telefone     BIGINT
+                                                           , IN ev_telefone     VARCHAR(20)
                                                            , IN ev_email	    VARCHAR(200)
                                                            , IN en_nro_ender    VARCHAR(10)
                                                            , IN en_cidade_id   	INT
@@ -33,6 +33,6 @@ BEGIN
       insert into endereco( descr, nro, bairro, cidade_id, pessoa_id ) values ( ev_descr_ender, en_nro_ender, ev_bairro_ender, en_cidade_id, vn_pessoa_id );
    end if;
    
-   insert into meio_comunic ( telefone, email, pessoa_id) values ( en_telefone, ev_email, vn_pessoa_id ); #meio_comunic
+   insert into meio_comunic ( telefone, email, pessoa_id) values ( trim(replace(replace(replace(ev_telefone, '-', ''), ')', ''),'(', '')), ev_email, vn_pessoa_id ); #meio_comunic
    
 END

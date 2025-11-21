@@ -36,6 +36,11 @@
     color: white;
 }
 
+.btn-excluir {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+}
+
 .form-container {
     display: flex;
     gap: 20px;

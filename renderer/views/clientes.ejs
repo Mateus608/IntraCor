@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+
+        <nav class="main-nav">
+            <ul>
+                <li class="active"><a href="/clientes"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li><a href="/apolices"><i class="fa-solid fa-file-invoice"></i> Apólices</a></li>
+                <li><a href="/endossos"><i class="fa-solid fa-file-pen"></i> Endossos</a></li>
+                </ul>
+            <div class="quoteflex-logo-nav" style="background-color: #01212B;">
+                <img src="/img/LogoQuoteFlexBranco.png" alt="QuoteFlex Logo">
+            </div>
+        </nav>
+
+        <div class="filter-bar">
+            <div class="filter-left">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+            <div class="filter-right">
+                <a href="/clientes/incluir" class="btn-primary-incluir" style="text-decoration: none;">
+                    <i class="fa-solid fa-plus"></i> Incluir
+                </a>
+            </div>
+        </div>
+
+        <main class="content-area">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr class="tr-pai">
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>CPF</th>
+                            <th>Preposto</th>
+                            <th style="display: flex; align-items: center; justify-content: center;"><img src="/img/EstrelaPrincipal.png" class="star-icon-principal"></th> 
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-clientes">
+                        <tr>
+                            <td colspan="8" style="text-align: center;">Carregando clientes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', carregarClientes);
+
+        async function carregarClientes() {
+            try {
+                const response = await fetch('/clientes/getClientes');
+                const data = await response.json();
+                
+                console.log(data);
+
+                if (data.success) {
+                    atualizarTabela(data.clientes);
+                } else {
+                    console.error('Erro ao carregar clientes:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro: ', error);
+            }
+        }
+
+        function atualizarTabela(clientes) {
+            const tbody = document.querySelector('.data-table tbody');
+            
+            if (clientes && clientes.length > 0) {
+                tbody.innerHTML = clientes.map(cliente => `
+                    <tr>
+                        <td>
+                            <a href="/clientes/alterar/${cliente.cliente_id}">
+                                <span class="fa fa-edit" style="text-align: center; color:blue"></span>
+                            </a>
+                        </td>
+                        <td>${cliente.nome}</td>
+                        <td>${cliente.email}</td>
+                        <td>${cliente.telefone}</td>
+                        <td>${cliente.cpf}</td>
+                        <td>${cliente.preposto_clie}</td>
+                        <td>
+                            <div class="star-column">
+                                <img src="/img/EstrelaMenor.png" alt="Não Favorito" class="star-icon">
+                            </div>
+                        </td>
+                        <td class="action-column">
+                            <a href="/clientes/getCliente/${cliente.cliente_id}">
+                                <img src="/img/IconePasta.png" alt="Acessar" class="action-icon">
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhum cliente encontrado!</td></tr>';
+            }
+        }
+
+    </script>
+</body>
+</html>
