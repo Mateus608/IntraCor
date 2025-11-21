@@ -87,7 +87,9 @@
                         <input type="date" id="data-fim" name="data-fim">
                     </div>
                 </div>
-                <button class="btn-include"><i class="fa-solid fa-file-pdf"></i> Gerar Relatório</button>
+                <button id="btn-gerar-relatorio" class="btn-include">
+                    <i class="fa-solid fa-file-pdf"></i> Gerar Relatório
+                </button>
             </div>
 
         </main>
@@ -190,6 +192,19 @@
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum usuário encontrado!</td></tr>';
             }
         }
+        // Lógica do Botão de Relatório
+        document.getElementById('btn-gerar-relatorio').addEventListener('click', function() {
+            const inicio = document.getElementById('data-inicio').value;
+            const fim = document.getElementById('data-fim').value;
+
+            if (!inicio || !fim) {
+                alert('Por favor, selecione as datas de início e fim.');
+                return;
+            }
+
+            const url = `/admin/relatorio/gerar?dataInicio=${inicio}&dataFim=${fim}`;
+            window.open(url, '_blank');
+        });
     </script>
 </body>
 </html>
