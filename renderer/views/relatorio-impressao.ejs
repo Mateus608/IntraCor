@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Gerencial - Intracor</title>
+    <style>
+        /* --- CSS ESPECÍFICO PARA IMPRESSÃO/PDF --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background: #fff; /* Fundo branco para papel */
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-container {
+            max-width: 210mm; /* Largura A4 */
+            margin: 0 auto;
+        }
+
+        /* Cabeçalho do Relatório */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px solid #002366;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .report-header h1 { margin: 0; color: #002366; font-size: 24px; }
+        .report-header p { margin: 5px 0 0; color: #666; font-size: 14px; }
+
+        /* Cards de Resumo */
+        .summary-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        .card h3 { margin: 0 0 5px; font-size: 28px; color: #0d6efd; }
+        .card span { font-size: 12px; text-transform: uppercase; color: #555; font-weight: bold; }
+
+        /* Tabelas */
+        .section-title {
+            background-color: #002366;
+            color: white;
+            padding: 8px 15px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+
+        /* Botões de Ação (Não aparecem na impressão) */
+        .no-print {
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #eee;
+            border-bottom: 1px solid #ccc;
+        }
+        .btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .btn-print { background: #0d6efd; color: white; }
+        .btn-close { background: #dc3545; color: white; margin-left: 10px; }
+
+        /* Regra Mágica: Esconde botões ao imprimir/salvar PDF */
+        @media print {
+            .no-print { display: none; }
+            body { padding: 0; }
+            .report-container { width: 100%; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button onclick="window.print()" class="btn btn-print">Salvar como PDF / Imprimir</button>
+        <button onclick="window.close()" class="btn btn-close">Fechar</button>
+    </div>
+
+    <div class="report-container">
+        
+        <div class="report-header">
+            <h1>Relatório Gerencial - Intracor</h1>
+            <p>Período: <%= dataInicio %> até <%= dataFim %></p>
+            <p>Gerado em: <%= new Date().toLocaleDateString('pt-BR') %> às <%= new Date().toLocaleTimeString('pt-BR') %></p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3><%= resumo.totalClientes %></h3>
+                <span>Total de Clientes</span>
+            </div>
+            <div class="card">
+                <h3><%= resumo.totalApolices %></h3>
+                <span>Apólices Emitidas</span>
+            </div>
+            <div class="card">
+                <h3><%= resumo.totalPremios %></h3>
+                <span>Valor Total (Prêmios)</span>
+            </div>
+        </div>
+
+        <div class="section-title">Ranking de Corretores (Top Performance)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Corretor</th>
+                    <th>Qtd. Apólices</th>
+                    <th>Valor Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% ranking.forEach((r, index) => { %>
+                <tr>
+                    <td style="text-align: center;"><%= index + 1 %>º</td>
+                    <td><%= r.nome %></td>
+                    <td><%= r.qtd %></td>
+                    <td><%= r.valor %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <div class="section-title">Detalhamento de Apólices por Cliente</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Nº Apólice</th>
+                    <th>Ramo</th>
+                    <th>Corretor Responsável</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% detalhes.forEach(d => { %>
+                <tr>
+                    <td><%= d.data %></td>
+                    <td><%= d.cliente %></td>
+                    <td><%= d.apolice %></td>
+                    <td><%= d.ramo %></td>
+                    <td><%= d.corretor %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 50px; font-size: 12px; color: #888;">
+            <p>Relatório gerado pelo sistema Intracor QuoteFlex.</p>
+        </div>
+    </div>
+
+    <script>
+        // Opcional: Abre a janela de impressão assim que carrega
+        // window.onload = function() { window.print(); }
+    </script>
+</body>
+</html>
