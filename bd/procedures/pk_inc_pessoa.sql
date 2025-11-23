@@ -30,7 +30,7 @@ BEGIN
    end if;
    
    if ev_descr_ender is not null then
-      insert into endereco( descr, nro, bairro, cidade_id, pessoa_id ) values ( ev_descr_ender, en_nro_ender, ev_bairro_ender, en_cidade_id, vn_pessoa_id );
+      insert into endereco( descr, nro, bairro, cidade_id, pessoa_id, princ ) values ( ev_descr_ender, en_nro_ender, ev_bairro_ender, en_cidade_id, vn_pessoa_id, 1 );
    end if;
    
    insert into meio_comunic ( telefone, email, pessoa_id) values ( trim(replace(replace(replace(ev_telefone, '-', ''), ')', ''),'(', '')), ev_email, vn_pessoa_id ); #meio_comunic

@@ -57,38 +57,76 @@
 
         <main class="content-area">
             <div class="apolice-list-container">
-                <ul>
-                    <% 
-                    // Dados de exemplo (substituir pelos dados do banco)
-                    const apolicesExemplo = [
-                        { nome: 'Mateus Milane', ramo: 'Auto', num: 20 },
-                        { nome: 'Luiza Da Silva Oliveira', ramo: 'Residência', num: 30 },
-                        { nome: 'Tiago Marques Da Silva', ramo: 'Auto', num: 25 },
-                        { nome: 'Lucas Marques', ramo: 'Auto', num: 20 },
-                        { nome: 'Carlos José', ramo: 'Auto', num: 30 },
-                        { nome: 'Fabiana Limeira Silva', ramo: 'Auto', num: 15 },
-                    ];
-                    %>
-
-                    <% apolicesExemplo.forEach(apolice => { %>
-                    <li>
-                        <div class="apolice-item">
-                            <div class="apolice-info">
-                                <i class="fa-solid fa-file-pdf"></i>
-                                <span><%= apolice.nome %> - <%= apolice.ramo %> - <%= apolice.num %></span>
-                            </div>
-                            <div class="apolice-actions">
-                                <a href="#" title="Anexar"><i class="fa-solid fa-paperclip"></i></a>
-                                <a href="#" title="Visualizar"><i class="fa-solid fa-eye"></i></a>
-                                <a href="#" title="Download"><i class="fa-solid fa-download"></i></a>
-                            </div>
-                        </div>
-                    </li>
-                    <% }) %>
+                <div class="apolice-list-container">
+                <ul id="lista-apolices">
+                    <li style="text-align: center; padding: 20px;">Carregando apólices...</li>
                 </ul>
+            </div>
             </div>
         </main>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', carregarApolices);
 
+        async function carregarApolices() {
+            try {
+                const response = await fetch('/apolices/getApolices');
+                const data = await response.json();
+
+                if (data.success) {
+                    atualizarLista(data.apolices);
+                } else {
+                    console.error('Erro ao carregar apólices:', data.error);
+                    document.getElementById('lista-apolices').innerHTML = '<li>Erro ao carregar dados.</li>';
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+            }
+        }
+
+        function atualizarLista(apolices) {
+            const ul = document.getElementById('lista-apolices');
+            
+            if (apolices && apolices.length > 0) {
+                ul.innerHTML = apolices.map(ap => {
+                    // Verifica se existe arquivo
+                    const temArquivo = ap.arquivo && ap.arquivo.length > 0;
+                    
+                    // Cria o link correto ou # se não tiver
+                    const linkArquivo = temArquivo ? `/uploads/${ap.arquivo}` : '#';
+                    
+                    // Define a cor: Azul se tiver arquivo, Cinza se não tiver
+                    const estiloIcone = temArquivo ? 'color: #0d6efd; cursor: pointer;' : 'color: #ccc; cursor: not-allowed;';
+                    const titulo = temArquivo ? 'Visualizar PDF' : 'Sem arquivo anexado';
+
+                    return `
+                    <li>
+                        <div class="apolice-item">
+                            <div class="apolice-info">
+                               <i class="fa-solid fa-file-pdf" style="color: #dc3545; font-size: 24px; margin-right: 15px;"></i>
+                               <div style="display: flex; flex-direction: column;">
+                                   <span style="font-weight: bold; font-size: 16px;">${ap.cliente}</span>
+                                   <span style="font-size: 13px; color: #666;">${ap.ramo} - Apólice: ${ap.numero}</span>
+                               </div>
+                            </div>
+                            <div class="apolice-actions">
+                                <a href="#" title="Anexar"><i class="fa-solid fa-paperclip"></i></a>
+                                
+                                <a href="${linkArquivo}" target="_blank" title="${titulo}" style="${estiloIcone}">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                
+                                <a href="${linkArquivo}" download title="Download" style="${estiloIcone}">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                `}).join('');
+            } else {
+                ul.innerHTML = '<li style="text-align: center; padding: 20px;">Nenhuma apólice encontrada.</li>';
+            }
+        }
+    </script>
 </body>
 </html>

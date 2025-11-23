@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes - Intracor</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/clientes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
@@ -48,8 +49,7 @@
                             <th>Telefone</th>
                             <th>CPF</th>
                             <th>Preposto</th>
-                            <th style="display: flex; align-items: center; justify-content: center;"><img src="/img/EstrelaPrincipal.png" class="star-icon-principal"></th> 
-                            <th></th>
+                            <th>Ações</th> 
                         </tr>
                     </thead>
                     <tbody id="tabela-clientes">
@@ -91,7 +91,7 @@
                     <tr>
                         <td>
                             <a href="/clientes/alterar/${cliente.cliente_id}">
-                                <span class="fa fa-edit" style="text-align: center; color:blue"></span>
+                                <span class="fa fa-edit" title="Editar" style="text-align: center; color:blue"></span>
                             </a>
                         </td>
                         <td>${cliente.nome}</td>
@@ -100,20 +100,28 @@
                         <td>${cliente.cpf}</td>
                         <td>${cliente.preposto_clie}</td>
                         <td>
-                            <div class="star-column">
-                                <img src="/img/EstrelaMenor.png" alt="Não Favorito" class="star-icon">
+                            <div class="col">
+                               <button class="btn-veiculo" title="Veículos" onClick="abrirModalVeiculos(${cliente.cliente_id})">
+                                  <span class="fa fa-car"></span>
+                               </button>
+                               <button class="btn-endereco" title="Endereços" onClick="abrirModalEnderecos(${cliente.cliente_id})">
+                                  <span class="fa fa-home"></span>
+                               </button>
                             </div>
-                        </td>
-                        <td class="action-column">
-                            <a href="/clientes/getCliente/${cliente.cliente_id}">
-                                <img src="/img/IconePasta.png" alt="Acessar" class="action-icon">
-                            </a>
                         </td>
                     </tr>
                 `).join('');
             } else {
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhum cliente encontrado!</td></tr>';
             }
+        }
+
+        function abrirModalVeiculos(clienteId) {
+            window.location.href = `/veiculos/${clienteId}`;
+        }
+
+        function abrirModalEnderecos(clienteId) {
+            window.location.href = `/enderecos/${clienteId}`;
         }
 
     </script>

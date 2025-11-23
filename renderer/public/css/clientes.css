@@ -31,6 +31,41 @@
     background-color: #0d6efd; /* Azul */
     color: white;
 }
+
+.btn-veiculo {
+    background-color: #0d6efd; /* Azul */
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.btn-endereco {
+    background-color: #0d6efd; /* Azul */
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
 .btn-cancelar {
     background-color: #dc3545; /* Vermelho */
     color: white;

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veículos do Cliente - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/veiculo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-car"></i> Veículos </h2>
+            <div class="page-actions">
+                <a href="/clientes" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+                <button class="btn-adicionar-veiculo" id="btn-adicionar-veiculo"><i class="fa-solid fa-plus"></i> Incluir Veículo</button>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <div class="table-container">
+                <div id="veiculos-container">
+                    <div class="loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>Carregando veículos...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Captura o id do cliente
+            const urlParts = window.location.pathname.split('/');
+            const clienteId = urlParts[urlParts.length - 1];
+            
+            console.log('ID do cliente capturado:', clienteId);
+
+            if (clienteId) {
+                carregarVeiculosCliente(clienteId);
+            } else {
+                mostrarMensagemErro('ID do cliente não encontrado');
+            }
+
+            document.getElementById('btn-adicionar-veiculo').addEventListener('click', function() {
+                window.location.href = `/veiculos/incluir/${clienteId}`;
+            });
+        });
+
+        async function carregarVeiculosCliente(clienteId) {
+            try {
+                const response = await fetch(`/veiculos/getVeiculos/${clienteId}`);
+                const data = await response.json();
+                
+                if (data.success && data.veiculos) {
+                    exibirVeiculos(data.veiculos);
+                } else {
+                    mostrarMensagemSemVeiculos();
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                mostrarMensagemErro('Erro ao carregar veículos');
+            }
+        }
+
+        function exibirVeiculos(veiculos) {
+            const container = document.getElementById('veiculos-container');
+            
+            if (veiculos.length === 0) {
+                mostrarMensagemSemVeiculos();
+                return;
+            }
+
+            const tabelaHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr class="tr-pai">
+                            <th>Placa</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Ano Fabricação</th>
+                            <th>Quilometragem</th>
+                            <th>Chassi</th>
+                            <th>Combustível</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${veiculos.map(veiculo => `
+                            <tr>
+                                <td>${formatarPlaca(veiculo.placa)}</td>
+                                <td>${veiculo.descr_marcaveic || 'N/A'}</td>
+                                <td>${veiculo.descr_modelveic || 'N/A'}</td>
+                                <td>${veiculo.ano_fab}</td>
+                                <td>${formatarKM(veiculo.km)}</td>
+                                <td>${veiculo.chassi || 'N/A'}</td>
+                                <td>${veiculo.descr_tpcombust || 'N/A'}</td>
+                                <td>
+                                    <div class="col">
+                                        <button class="btn-editar" onclick="editarVeiculo(${veiculo.veiculo_id})" title="Editar">
+                                            <i class="fa-solid fa-edit" style="color: #27ae60;"></i>
+                                        </button>
+                                        <button class="btn-excluir-veiculo" onclick="excluirVeiculo(${veiculo.veiculo_id})" title="Excluir">
+                                            <i class="fa-solid fa-trash" style="color: #e74c3c;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tabelaHTML;
+        }
+
+        function mostrarMensagemSemVeiculos() {
+            const container = document.getElementById('veiculos-container');
+            container.innerHTML = `
+                <div class="sem-veiculos" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                    <i class="fa-solid fa-car" style="font-size: 3em; margin-bottom: 15px; color: #bdc3c7;"></i>
+                    <h3>Nenhum veículo cadastrado</h3>
+                    <p>Clique em "Adicionar Veículo" para cadastrar o primeiro veículo deste cliente.</p>
+                </div>
+            `;
+        }
+
+        function mostrarMensagemErro(mensagem) {
+            const container = document.getElementById('veiculos-container');
+            container.innerHTML = `
+                <div class="sem-veiculos" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                    <i class="fa-solid fa-exclamation-triangle" style="font-size: 3em; margin-bottom: 15px; color: #e74c3c;"></i>
+                    <h3>Erro</h3>
+                    <p>${mensagem}</p>
+                </div>
+            `;
+        }
+
+        function formatarPlaca(placa) {
+            if (!placa) return 'N/A';
+            return placa.toUpperCase();
+        }
+
+        function formatarKM(km) {
+            if (!km) return '0 km';
+            return `${parseFloat(km).toLocaleString('pt-BR')} km`;
+        }
+
+        function editarVeiculo(veiculoId) {
+            window.location.href = `/veiculos/alterar/${veiculoId}`;
+        }
+
+        async function excluirVeiculo(veiculoId) {
+            if (!confirm('Tem certeza que deseja excluir este veículo?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/veiculos/excluir', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ veiculoId: veiculoId })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Veículo excluído com sucesso!');
+                    
+                    // Recarrega a página para atualizar a lista
+                    window.location.reload();
+                } else {
+                    alert('Erro ao excluir veículo: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao excluir veículo: ' + error.message);
+            }
+        }
+
+    </script>
+</body>
+</html>

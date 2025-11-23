@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusão de Veículo - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/veiculo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-plus"></i> Inclusão de Veículo</h2>
+            <div class="page-actions">
+                <button class="btn-salvar"><i class="fa-solid fa-save"></i> Salvar</button>
+                <button class="btn-cancelar" id="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</button>
+            </div>
+        </header>
+        
+        <main class="form-container">
+            <div class="form-main">
+                <section class="form-section">
+                    <h4>Dados do Veículo</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="placa">Placa</label>
+                            <input type="text" id="placa" placeholder="ABC1D23" maxlength="7">
+                        </div>
+                        <div class="form-group">
+                            <label for="ano_fab">Ano de Fabricação</label>
+                            <input type="number" id="ano_fab" min="1900" max="2030" maxlength="4" placeholder="2023">
+                        </div>
+                        <div class="form-group">
+                            <label for="km">Quilometragem</label>
+                            <input type="number" id="km" step="0.01" maxlength="10,2" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="chassi">Chassi</label>
+                            <input type="text" id="chassi" placeholder="9BWZZZ377VT004251" maxlength="17">
+                        </div>
+                        <div class="form-group">
+                            <label for="tpCombust">Tipo de Combustível</label>
+                            <select id="tpCombust">
+                                <option value="">Carregando tipos de combustível...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="mrcMdVeic">Marca/Modelo</label>
+                            <select id="mrcMdVeic">
+                                <option value="">Carregando marcas e modelos...</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarTiposCombust();
+            carregarMarcaModelVeic();
+            
+            // Captura o id passado no endereço
+            const urlParts = window.location.pathname.split('/');
+            const parametroId = urlParts[urlParts.length - 1];
+            const tipoRota = urlParts[urlParts.length - 2];
+            
+            console.log('Parâmetro capturado:', parametroId);
+            console.log('Tipo de rota:', tipoRota);
+            
+            if (tipoRota === 'alterar') {
+                // Modo edição - parâmetro é veiculo_id
+                carregarDadosVeiculo(parametroId);
+                document.querySelector('h2').innerHTML = '<i class="fa-solid fa-edit"></i> Alteração de Veículo';
+            } 
+
+            document.getElementById('btn-cancelar').addEventListener('click', function() {
+                if (tipoRota === 'alterar') {
+                    // Para voltar da edição, precisa carregar o cliente_id do veículo
+                    carregarClienteDoVeiculo(parametroId);
+                } else {
+                    // Para voltar da inclusão, usa o cliente_id direto
+                    window.location.href = `/veiculos/${parametroId}`;
+                }
+            });
+        });
+
+        // TIPOS DE COMBUSTÍVEL
+        async function carregarTiposCombust() {
+            try {
+                const response = await fetch('/clientes/getTpCombust');
+                const data = await response.json();
+                
+                if (data.success && data.tpCombust) {
+                    preencherSelectTpCombust(data.tpCombust);
+                } else {
+                    console.error('Erro ao carregar tipos de combustível:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectTpCombust(tpCombust) {
+            const selectTpCombust = document.getElementById('tpCombust');
+            
+            selectTpCombust.innerHTML = '<option value="">Selecione um tipo de combustível</option>';
+            
+            tpCombust.forEach(tp => {
+                const option = document.createElement('option');
+                option.value = tp.vlr;
+                option.textContent = tp.descr;
+                selectTpCombust.appendChild(option);
+            });
+        }
+
+        // MARCAVEIC_MODELOVEIC
+        async function carregarMarcaModelVeic() {
+            try {
+                const response = await fetch('/clientes/getMarcaModelVeic');
+                const data = await response.json();
+                
+                if (data.success && data.marcModelsVeic) {
+                    preencherSelectMarcaModelVeic(data.marcModelsVeic);
+                } else {
+                    console.error('Erro ao carregar marcas e modelos de veículo:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectMarcaModelVeic(marcModelsVeic) {
+            const selectMarcaModelVeic = document.getElementById('mrcMdVeic');
+            
+            selectMarcaModelVeic.innerHTML = '<option value="">Selecione uma marca/modelo</option>';
+            
+            marcModelsVeic.forEach(marcModelVeic => {
+                const option = document.createElement('option');
+                option.value = marcModelVeic.mrcmdveic_id;
+                option.textContent = marcModelVeic.descr;
+                selectMarcaModelVeic.appendChild(option);
+            });
+        }
+
+        // Função para carregar dados do veículo específico
+        async function carregarDadosVeiculo(veiculoId) {
+            try {
+                const response = await fetch(`/veiculos/getVeiculo/${veiculoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.veiculo) {
+                    preencherFormulario(data.veiculo);
+                } else {
+                    console.error('Erro ao carregar dados do veículo:', data.error);
+                    alert('Erro ao carregar dados do veículo');
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        // Função para preencher o formulário com os dados do veículo
+        async function preencherFormulario(veiculo) {
+            document.getElementById('placa').value = veiculo.placa || '';
+            document.getElementById('ano_fab').value = veiculo.ano_fab || '';
+            document.getElementById('km').value = veiculo.km || '';
+            document.getElementById('chassi').value = veiculo.chassi || '';
+
+            await Promise.all([
+                carregarTiposCombust().then(() => {
+                    document.getElementById('tpCombust').value = veiculo.tp_combust || '';
+                }),
+                carregarMarcaModelVeic().then(() => {
+                    document.getElementById('mrcMdVeic').value = veiculo.mrcmdveic_id || '';
+                })
+            ]);
+        }
+
+        async function carregarClienteDoVeiculo(veiculoId) {
+            try {
+                const response = await fetch(`/veiculos/getVeiculo/${veiculoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.veiculo) {
+                    window.location.href = `/veiculos/${data.veiculo.cliente_id}`;
+                } else {
+                    window.location.href = '/clientes';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar cliente:', error);
+                window.location.href = '/clientes';
+            }
+        }
+
+        // INSERÇÃO/ATUALIZAÇÃO DE VEÍCULO
+        document.querySelector('.btn-salvar').addEventListener('click', function(e) {
+            e.preventDefault();
+            salvarVeiculo();
+        });
+
+        async function salvarVeiculo() {
+            const urlParts = window.location.pathname.split('/');
+            const parametroId = urlParts[urlParts.length - 1];
+            const tipoRota = urlParts[urlParts.length - 2];
+            
+            let clienteId = null;
+            let veiculoId = null;
+
+            if (tipoRota === 'alterar') {
+                veiculoId = parametroId;
+                // Para alteração, precisa buscar o cliente_id do veículo
+                const veiculoData = await buscarDadosVeiculo(veiculoId);
+                clienteId = veiculoData.cliente_id;
+            } else {
+                clienteId = parametroId;
+            }
+            
+            const dadosVeiculo = {
+                placa_veic: document.getElementById('placa').value.toUpperCase(),
+                chassi_veic: document.getElementById('chassi').value.toUpperCase(),
+                anofab_veic: document.getElementById('ano_fab').value,
+                km_veic: document.getElementById('km').value,
+                tpCombust_veic: document.getElementById('tpCombust').value,
+                mrcmdveic_id: document.getElementById('mrcMdVeic').value,
+                cliente_id: clienteId
+            };
+            
+            // Validações básicas
+            if (!dadosVeiculo.placa_veic || dadosVeiculo.placa_veic.length !== 7) {
+                alert('Por favor, informe uma placa válida (7 caracteres)');
+                return;
+            }
+
+            if (!dadosVeiculo.anofab_veic) {
+                alert('Por favor, informe o ano de fabricação');
+                return;
+            }
+
+            if (!dadosVeiculo.mrcmdveic_id) {
+                alert('Por favor, selecione uma marca/modelo');
+                return;
+            }
+
+            try {
+                let url, method;
+                
+                if (veiculoId) {
+                    dadosVeiculo.veiculo_id = veiculoId;
+                    url = `/veiculos/alterar/${veiculoId}`;
+                    method = 'PUT';
+                } else {
+                    url = '/veiculos/incluir';
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosVeiculo)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(veiculoId ? 'Veículo alterado com sucesso!' : 'Veículo salvo com sucesso!');
+                    window.location.href = `/veiculos/${clienteId}`;
+                } else {
+                    alert('Erro ao salvar veículo: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar veículo: ' + error.message);
+            }
+        }
+
+        async function buscarDadosVeiculo(veiculoId) {
+            try {
+                const response = await fetch(`/veiculos/getVeiculo/${veiculoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.veiculo) {
+                    return data.veiculo;
+                } else {
+                    throw new Error('Não foi possível carregar dados do veículo');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do veículo:', error);
+                throw error;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -20,7 +20,7 @@
                 <a href="/clientes" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
             </div>
         </header>
-
+        
         <main class="form-container">
 
             <div class="form-main">
@@ -105,7 +105,7 @@
                         </div>
                     </div>
                 </section>
-                </div>
+            </div>
 
             <aside class="form-sidebar">
                 <input type="file" id="file-input" style="display: none;" multiple>
@@ -126,7 +126,7 @@
             carregarUsuarios(); 
             carregarGrEconomico(); 
             carregarCidades();
-
+            
             //Captura o id passado no endereço
             const urlParts = window.location.pathname.split('/');
             const clienteId = urlParts[urlParts.length - 1];
@@ -209,16 +209,18 @@
             });
         }
 
-        //CIDADE
-        async function carregarCidades() {
+        
+        // Função para carregar dados do cliente específico
+        async function carregarDadosCliente(clienteId) {
             try {
-                const response = await fetch('/clientes/getCidades');
+                const response = await fetch(`/clientes/getCliente/${clienteId}`);
                 const data = await response.json();
                 
-                if (data.success && data.cidades) {
-                    preencherSelectCidades(data.cidades);
+                if (data.success && data.cliente) {
+                    preencherFormulario(data.cliente);
                 } else {
-                    console.error('Erro ao carregar Cidades:', data.error);
+                    console.error('Erro ao carregar dados do cliente:', data.error);
+                    alert('Erro ao carregar dados do cliente');
                 }
             } catch (error) {
                 console.error('Erro na requisição:', error);
@@ -240,23 +242,6 @@
             document.getElementById('cidade').addEventListener('change', function() {
                 const cidade_id = this.value;
             });
-        }
-
-        // Função para carregar dados do cliente específico
-        async function carregarDadosCliente(clienteId) {
-            try {
-                const response = await fetch(`/clientes/getCliente/${clienteId}`);
-                const data = await response.json();
-                
-                if (data.success && data.cliente) {
-                    preencherFormulario(data.cliente);
-                } else {
-                    console.error('Erro ao carregar dados do cliente:', data.error);
-                    alert('Erro ao carregar dados do cliente');
-                }
-            } catch (error) {
-                console.error('Erro na requisição:', error);
-            }
         }
         
         // Função para preencher o formulário com os dados do cliente
@@ -290,6 +275,22 @@
                 document.getElementById('profissao').value = 'engenheiro';
             } else if (cliente.profissao === 'ADVOGADO'){
                 document.getElementById('profissao').value = 'advogado';
+            }
+        }
+        
+
+        async function carregarCidades() {
+            try {
+                const response = await fetch('/clientes/getCidades');
+                const data = await response.json();
+                
+                if (data.success && data.cidades) {
+                    preencherSelectCidades(data.cidades);
+                } else {
+                    console.error('Erro ao carregar cidades:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
             }
         }
 
@@ -529,19 +530,19 @@
             }
             
             const dadosCliente = {
-                nome: document.getElementById('cliente').value,
-                telefone: document.getElementById('telefone').value,
-                cpf: limparCPF(document.getElementById('cpf').value),
-                usuprep_id: document.getElementById('preposto').value,
-                email: document.getElementById('email').value,
-                profissao: document.getElementById('profissao').value,
-                dt_nasc: document.getElementById('nascimento').value,
-                greconomico_id: document.getElementById('grupoEconomico').value,
-                descr_ender: document.getElementById('logradouro').value,
-                nro_ender: document.getElementById('numero').value,
-                bairro_ender: document.getElementById('bairro').value,
-                cidade_id: document.getElementById('cidade').value,
-                obs: document.getElementById('observacoes').value,
+                nome:               document.getElementById('cliente').value,
+                telefone:           document.getElementById('telefone').value,
+                cpf:                limparCPF(document.getElementById('cpf').value),
+                usuprep_id:         document.getElementById('preposto').value,
+                email:              document.getElementById('email').value,
+                profissao:          document.getElementById('profissao').value,
+                dt_nasc:            document.getElementById('nascimento').value,
+                greconomico_id:     document.getElementById('grupoEconomico').value,
+                descr_ender:        document.getElementById('logradouro').value,
+                nro_ender:          document.getElementById('numero').value,
+                bairro_ender:       document.getElementById('bairro').value,
+                cidade_id:          document.getElementById('cidade').value,
+                obs:                document.getElementById('observacoes').value,
                 cliente_id: clienteId
             };
             

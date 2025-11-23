@@ -3,234 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inclusão de Apólice - Intracor</title>
+    <title>Incluir Apólice - Intracor</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/inclusao-apolices.css"> 
+    <link rel="stylesheet" href="/css/apolices.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
+
     <div class="main-wrapper">
         <%- include('partials/header') %>
-        
-        <header class="page-header">
-            <h2><i class="fa-solid fa-file-invoice"></i> Inclusão de Apólice</h2>
-            <div class="page-actions">
-                 <button class="btn-salvar"><i class="fa-solid fa-save"></i> Salvar</button>
-                 <a href="/apolices" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/clientes"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li class="active"><a href="/apolices"><i class="fa-solid fa-file-invoice"></i> Apólices</a></li>
+                <li><a href="/endossos"><i class="fa-solid fa-file-pen"></i> Endossos</a></li>
+            </ul>
+            <div class="quoteflex-logo-nav" style="background-color: #01212B;">
+                <img src="/img/LogoQuoteFlexBranco.png" alt="QuoteFlex Logo">
             </div>
-        </header>
+        </nav>
 
-        <main class="form-container">
-
-            <div class="form-main">
-                <section class="form-section">
-                    <h4>Dados do Cliente</h4>
-                    <div class="form-row">
-                        <div class="form-group large">
-                            <label for="cliente">Cliente</label>
-                            <input type="text" id="cliente" placeholder="Nome do Cliente">
-                        </div>
-                        <div class="form-group">
-                            <label for="cpf">CPF</label>
-                            <input type="text" id="cpf" placeholder="000.000.000-00">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">E-mail</label>
-                            <input type="email" id="email" placeholder="email@email.com.br">
-                        </div>
-                        <div class="form-group">
-                            <label for="telefone">Telefone</label>
-                            <input type="text" id="telefone" placeholder="(00) 00000-0000">
-                        </div>
-                        <div class="form-group">
-                            <label for="preposto">Preposto</label>
-                            <input type="text" id="preposto" placeholder="Nome do preposto">
-                        </div>
-                    </div>
-                </section>
-
-                <section class="form-section">
-                    <h4>Dados da Apólice</h4>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="num-apolice">N° Apólice</label>
-                            <input type="text" id="num-apolice">
-                        </div>
-                        <div class="form-group">
-                            <label for="num-proposta">N° Proposta</label>
-                            <input type="text" id="num-proposta">
-                        </div>
-                         <div class="form-group">
-                            <label for="premio-total">Prêmio Total</label>
-                            <input type="text" id="premio-total" value="R$ 0,00">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="franquia">Franquia</label>
-                            <input type="text" id="franquia" value="R$ 0,00">
-                        </div>
-                        <div class="form-group small">
-                            <label for="classe-bonus">Classe Bônus</label>
-                            <input type="text" id="classe-bonus" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="forma-pgto">Forma de pagamento</label>
-                            <select id="forma-pgto">
-                                <option value="Boleto">Boleto</option>
-                                <option value="Debito">Débito em C/C</option>
-                                <option value="Cartao">Cartão de Crédito</option>
-                            </select>
-                        </div>
-                    </div>
-                </section>
+        <main class="content-area">
+            <div class="form-container">
+                <h1>Incluir Nova Apólice</h1>
                 
-                <section class="form-section">
-                    <h4>Vigência e Itens</h4>
-                    <div class="form-row">
-                         <div class="form-group large">
-                            <label for="item">Item</label>
-                            <input type="text" id="item" placeholder="Descrição do item segurado (ex: Veículo XYZ)">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="vig-inicio">Vigência Inicial</label>
-                            <input type="text" id="vig-inicio" placeholder="dd/mm/aaaa">
-                        </div>
-                        <div class="form-group">
-                            <label for="vig-final">Vigência Final</label>
-                            <input type="text" id="vig-final" placeholder="dd/mm/aaaa">
-                        </div>
-                        <div class="form-group">
-                            <label for="data-emissao">Data de Emissão</label>
-                            <input type="text" id="data-emissao" placeholder="dd/mm/aaaa">
-                        </div>
-                    </div>
-                </section>
+                <form id="form-apolice" action="/apolices/salvar" method="POST" enctype="multipart/form-data">
+                    <div class="form-grid">
+                        <!-- Dados Básicos -->
+                        <div class="form-section">
+                            <h3>Dados Básicos</h3>
+                            
+                            <div class="form-group">
+                                <label for="cliente">Cliente *</label>
+                                <select id="cliente" name="clienteNome" required>
+                                    <option value="">Selecione um cliente</option>
+                                </select>
+                            </div>
 
-                 <section class="form-section">
-                    <h4>Comissão e Ramo</h4>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="cia">CIA</label>
-                            <select id="cia">
-                                <option value="Porto Seguro">Porto Seguro</option>
-                                <option value="Azul">Azul</option>
-                            </select>
+                            <div class="form-group">
+                                <label for="nApolice">Número da Apólice *</label>
+                                <input type="text" id="nApolice" maxlength="16"   name="nApolice" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tipoApolice">Tipo de Apólice *</label>
+                                <select id="tipoApolice" name="tipoApoliceId" required>
+                                    <option value="">Selecione o tipo</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ramoApolice">Ramo *</label>
+                                <select id="ramoApolice" name="ramoId" required>
+                                    <option value="">Selecione o ramo</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="ramo">Ramo</label>
-                            <select id="ramo">
-                                <option value="Residencia">Residência</option>
-                                <option value="Auto">Auto</option>
-                                <option value="Vida">Vida</option>
-                            </select>
+
+                        <!-- Valores e Pagamento -->
+                        <div class="form-section">
+                            <h3>Valores e Pagamento</h3>
+                            
+                            <div class="form-group">
+                                <label for="premioTotal">Prêmio Total *</label>
+                                <input type="text" id="premioTotal" name="premioTotal" placeholder="R$ 0,00" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="parcelas">Parcelas *</label>
+                                <input type="text" id="parcelas" name="parcelas" placeholder="Ex: 12x" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tipoPagamento">Forma de Pagamento *</label>
+                                <select id="tipoPagamento" name="formaPagamentoId" required>
+                                    <option value="">Selecione a forma</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group small">
-                            <label for="comissao">% Comissão</label>
-                            <input type="text" id="comissao" value="20">
+
+                        <!-- Vigência -->
+                        <div class="form-section">
+                            <h3>Vigência</h3>
+                            
+                            <div class="form-group">
+                                <label for="vigenciaInicio">Início da Vigência *</label>
+                                <input type="date" id="vigenciaInicio" name="vigenciaInicio" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="vigenciaFinal">Fim da Vigência *</label>
+                                <input type="date" id="vigenciaFinal" name="vigenciaFinal" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="parcelas">Parcelas</label>
-                            <input type="text" id="parcelas" value="12 vezes">
+
+                        <!-- Anexos -->
+                        <div class="form-section">
+                            <h3>Anexos</h3>
+                            
+                            <div class="form-group">
+                                <label for="anexo">Anexar Documento</label>
+                                <input type="file" id="anexo" name="anexo" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                <small>Formatos aceitos: PDF, JPG, PNG, DOC (Max: 10MB)</small>
+                            </div>
                         </div>
                     </div>
-                </section>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="window.history.back()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Salvar Apólice</button>
+                    </div>
+                </form>
             </div>
-            <aside class="form-sidebar">
-                
-                <input type="file" id="file-input" style="display: none;" multiple>
-                
-                <button class="btn-anexar" id="btn-anexar-trigger"><i class="fa-solid fa-paperclip"></i> Anexar Apólice</button>
-                
-                <div class="file-list">
-                    <div id="file-preview-container" class="file-preview-grid">
-                        </div>
-
-                    <ul id="file-list-ul" style="display: none;"></ul>
-                </div>
-
-            </aside>
-            </main>
+        </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarClientes();
+            carregarTiposApolice();
+            carregarRamosApolice();
+            carregarTiposPagamento();
+            
+            // Máscara para o campo de prêmio
+            const premioInput = document.getElementById('premioTotal');
+            premioInput.addEventListener('input', formatarMoeda);
+        });
 
-            const anexarButton = document.getElementById('btn-anexar-trigger');
-            const fileInput = document.getElementById('file-input');
-            const previewContainer = document.getElementById('file-preview-container');
+        // Função para formatar moeda
+        function formatarMoeda(event) {
+            let value = event.target.value.replace(/\D/g, '');
+            value = (value / 100).toFixed(2) + '';
+            value = value.replace(".", ",");
+            value = value.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
+            value = value.replace(/(\d)(\d{3}),/g, "$1.$2,");
+            event.target.value = 'R$ ' + value;
+        }
 
-            // --- Ação de clicar no botão "Anexar" ---
-            anexarButton.addEventListener('click', (e) => {
-                e.preventDefault(); 
-                fileInput.click();
-            });
-
-            // --- Ação de selecionar um arquivo ---
-            fileInput.addEventListener('change', (e) => {
-                const files = e.target.files;
-                if (!files.length) return;
-
-                for (const file of files) {
-                    const iconClass = getFileIconClass(file.name);
-                    const fileURL = URL.createObjectURL(file);
-                    
-                    const previewBox = document.createElement('div');
-                    previewBox.className = 'file-preview-box';
-                    previewBox.dataset.fileUrl = fileURL;
-
-                    // --- MUDANÇA PRINCIPAL AQUI ---
-                    // Adicionamos o <div>.preview-actions e o <a> com o ícone de olho
-                    previewBox.innerHTML = `
-                        <a href="${fileURL}" target="_blank" rel="noopener noreferrer" class="preview-link">
-                            <div class="preview-icon">
-                                <i class="fa-solid ${iconClass}"></i>
-                            </div>
-                            <div class="preview-info">
-                                <span class="file-name">${file.name}</span>
-                            </div>
-                        </a>
-
-                        <div class="preview-actions">
-                            <a href="${fileURL}" target="_blank" rel="noopener noreferrer">
-                                <i class="fa-solid fa-eye file-view-icon"></i>
-                            </a>
-                            <i class="fa-solid fa-trash-can file-delete-icon"></i>
-                        </div>
-                    `;
-                    // --- FIM DA MUDANÇA ---
-                    
-                    previewContainer.appendChild(previewBox);
+        // Funções para carregar dados dos selects
+        async function carregarClientes() {
+            try {
+                const response = await fetch('/clientes/getClientes');
+                const data = await response.json();
+                
+                const select = document.getElementById('cliente');
+                if (data.success && data.clientes) {
+                    select.innerHTML = '<option value="">Selecione um cliente</option>';
+                    data.clientes.forEach(cliente => {
+                        const option = document.createElement('option');
+                        option.value = cliente.nome;
+                        option.textContent = cliente.nome;
+                        select.appendChild(option);
+                    });
                 }
-                e.target.value = null; 
-            });
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+            }
+        }
 
-            // --- Ação de excluir um arquivo (sem alteração) ---
-            previewContainer.addEventListener('click', (e) => {
-                // Verifica se o clique foi na LIXEIRA
-                if (e.target.classList.contains('file-delete-icon')) {
-                    const box = e.target.closest('.file-preview-box');
-                    if (box) {
-                        URL.revokeObjectURL(box.dataset.fileUrl);
-                        box.remove();
-                    }
+        async function carregarTiposApolice() {
+            try {
+                const response = await fetch('/apolices/getTiposApolice');
+                const data = await response.json();
+                
+                const select = document.getElementById('tipoApolice');
+                if (data.success && data.tipos) {
+                    select.innerHTML = '<option value="">Selecione o tipo</option>';
+                    data.tipos.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.id;
+                        option.textContent = tipo.descricao;
+                        select.appendChild(option);
+                    });
                 }
-            });
+            } catch (error) {
+                console.error('Erro ao carregar tipos de apólice:', error);
+            }
+        }
 
-            // --- Função Auxiliar: Define o ícone (sem alteração) ---
-            function getFileIconClass(fileName) {
-                const extension = fileName.split('.').pop().toLowerCase();
-                switch (extension) {
-                    case 'pdf': return 'fa-file-pdf';
-                    case 'doc': case 'docx': return 'fa-file-word';
-                    case 'xls': case 'xlsx': return 'fa-file-excel';
-                    case 'jpg': case 'jpeg': case 'png': case 'gif': return 'fa-file-image';
-                    default: return 'fa-file-lines';
+        async function carregarRamosApolice() {
+            try {
+                const response = await fetch('/apolices/getRamosApolice');
+                const data = await response.json();
+                
+                const select = document.getElementById('ramoApolice');
+                if (data.success && data.ramos) {
+                    select.innerHTML = '<option value="">Selecione o ramo</option>';
+                    data.ramos.forEach(ramo => {
+                        const option = document.createElement('option');
+                        option.value = ramo.id;
+                        option.textContent = ramo.descricao;
+                        select.appendChild(option);
+                    });
                 }
+            } catch (error) {
+                console.error('Erro ao carregar ramos de apólice:', error);
+            }
+        }
+
+        async function carregarTiposPagamento() {
+            try {
+                const response = await fetch('/apolices/getTiposPagamento');
+                const data = await response.json();
+                
+                const select = document.getElementById('tipoPagamento');
+                if (data.success && data.tiposPagamento) {
+                    select.innerHTML = '<option value="">Selecione a forma</option>';
+                    data.tiposPagamento.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.id;
+                        option.textContent = tipo.descricao;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar tipos de pagamento:', error);
+            }
+        }
+
+        // Submit do formulário
+        document.getElementById('form-apolice').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/apolices/salvar', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Apólice salva com sucesso!');
+                    window.location.href = '/apolices';
+                } else {
+                    alert('Erro ao salvar apólice: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar apólice.');
             }
         });
     </script>

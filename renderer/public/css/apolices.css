@@ -1,28 +1,207 @@
 /* --- 5. ESTILOS DA PÁGINA DE APÓLICES --- */
 
-/* Ajuste na barra de filtro para ter uma busca central */
-.filter-center-search {
-    width: 30%; /* Define uma largura para a busca */
+/* HEADER DA PÁGINA */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dcdcdc;
 }
+
+.page-header h2 {
+    font-size: 1.2rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-actions button, .page-actions a {
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    margin-left: 10px;
+}
+
+/* FORMULÁRIO DE INCLUSÃO DE APÓLICE */
+.form-container {
+    background-color: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px;
+}
+
+.form-container h1 {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.form-section {
+    background-color: #fafafa;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.form-section h3 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-section h3 i {
+    color: #0d6efd;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+    font-size: 13px;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+}
+
+.form-group input[type="file"] {
+    padding: 8px;
+    background-color: #f8f9fa;
+}
+
+.form-group small {
+    margin-top: 5px;
+    color: #666;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* AÇÕES DO FORMULÁRIO */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+}
+
+/* BARRA DE FILTRO (para lista de apólices) */
+.filter-center-search {
+    width: 30%;
+}
+
 .filter-center-search .search-box {
     width: 100%;
 }
+
 .filter-center-search .search-box input {
-    width: 100%; /* Faz o input ocupar todo o espaço */
+    width: 100%;
     text-align: center;
 }
 
-/* Container da lista de apólices */
+/* LISTA DE APÓLICES */
 .apolice-list-container {
     width: 100%;
     background-color: #ffffff;
     border: 1px solid #dcdcdc;
     border-radius: 8px;
     overflow: hidden;
+    margin: 20px;
 }
 
 .apolice-list-container ul {
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .apolice-item {
@@ -38,7 +217,7 @@
 }
 
 .apolice-item:hover {
-    background-color: #f5fafd; /* Mesmo hover da tabela */
+    background-color: #f5fafd;
 }
 
 /* Lado esquerdo (ícone e texto) */
@@ -49,7 +228,7 @@
 }
 
 .apolice-info .fa-file-pdf {
-    color: #d32f2f; /* Vermelho PDF */
+    color: #d32f2f;
     font-size: 1.4rem;
 }
 
@@ -70,8 +249,115 @@
     text-decoration: none;
     color: #555;
     font-size: 1.1rem;
+    transition: color 0.2s;
 }
 
 .apolice-actions a:hover {
-    color: #002366; /* Azul Intracor */
+    color: #002366;
+}
+
+/* BOTÃO INCLUIR NA BARRA DE FILTRO */
+.btn-primary-incluir {
+    background-color: #0d6efd;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-primary-incluir:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+/* ESTADOS DOS CAMPOS */
+.form-group.required label::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.form-group .error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .filter-center-search {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .apolice-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .apolice-actions {
+        align-self: flex-end;
+    }
+}
+
+/* ANIMAÇÕES */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-section {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* LOADING STATES */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

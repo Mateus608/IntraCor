@@ -1,0 +1,322 @@
+/* Botão Adicionar Endereço */
+.btn-adicionar-endereco {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.btn-adicionar-endereco:hover {
+    background-color: #0b5ed7;
+}
+
+/* Estados da página de endereços */
+.sem-enderecos {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+}
+
+.sem-enderecos i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: #bdc3c7;
+}
+
+/* Ações dos endereços */
+.btn-excluir-endereco {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-excluir-endereco:hover {
+    background: #f8d7da;
+}
+
+
+/* Botão Adicionar Veículo - seguindo o padrão do sistema */
+.btn-adicionar-veiculo {
+    background-color: #0d6efd; /* Azul padrão do sistema */
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dcdcdc;
+}
+.page-header h2 {
+    font-size: 1.2rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancelar {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.btn-adicionar-veiculo:hover {
+    background-color: #0b5ed7; /* Azul mais escuro no hover */
+}
+
+.btn-cancelar {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+}
+
+/* Usando a tabela padrão do sistema em vez de .tabela-veiculos */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* Ações dos veículos */
+.col {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-editar, .btn-excluir-veiculo {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-editar:hover {
+    background: #d4edda;
+}
+
+.btn-excluir-veiculo:hover {
+    background: #f8d7da;
+}
+
+.btn-salvar {
+    background-color: #0d6efd; /* Azul */
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+.btn-cancelar {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+}
+
+.btn-excluir {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+}
+
+/* Estados da página */
+.sem-veiculos {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+}
+
+.sem-veiculos i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: #bdc3c7;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+}
+
+.loading i {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #3498db;
+}
+
+/* Garantir que a navegação tenha o menu completo */
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 20px;
+}
+
+.main-nav li {
+    margin: 0;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.main-nav a:hover, .main-nav li.active a {
+    background-color: #e9ecef;
+}
+
+/* Ajuste do container da tabela */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-actions {
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    margin-left: 10px;
+}
+
+
+.form-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    align-items: flex-start; /* Alinha os itens no topo */
+}
+.form-main {
+    flex: 3; /* Ocupa 3/4 do espaço */
+    background-color: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 25px;
+}
+.form-sidebar {
+    flex: 1; /* Ocupa 1/4 do espaço */
+    background-color: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 25px;
+}
+.form-section {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.form-section h4 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+    font-size: 13px;
+}
+.form-group input, .form-group select, .form-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+}
+/* Ajustes de tamanho dos campos */
+.form-group.small { flex: 0.5; }
+.form-group.large { flex: 2; }
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}

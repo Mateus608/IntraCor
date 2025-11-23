@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusão de Endereço - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/veiculo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-plus"></i> Inclusão de Endereço</h2>
+            <div class="page-actions">
+                <button class="btn-salvar"><i class="fa-solid fa-save"></i> Salvar</button>
+                <button class="btn-cancelar" id="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</button>
+            </div>
+        </header>
+        
+        <main class="form-container">
+            <div class="form-main">
+                <section class="form-section">
+                    <h4>Dados do Endereço</h4>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label for="descr">Endereço</label>
+                            <input type="text" id="descr" placeholder="Rua, Avenida, etc..." maxlength="300">
+                        </div>
+                        <div class="form-group small">
+                            <label for="nro">Número</label>
+                            <input type="number" id="nro" placeholder="123">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" placeholder="Bairro" maxlength="300">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <select id="cidade">
+                                <option value="">Carregando cidades...</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarCidades();
+            
+            // Captura o id passado no endereço
+            const urlParts = window.location.pathname.split('/');
+            const parametroId = urlParts[urlParts.length - 1];
+            const tipoRota = urlParts[urlParts.length - 2];
+            
+            console.log('Parâmetro capturado:', parametroId);
+            console.log('Tipo de rota:', tipoRota);
+            
+            if (tipoRota === 'alterar') {
+                // Modo edição - parâmetro é endereco_id
+                carregarDadosEndereco(parametroId);
+                document.querySelector('h2').innerHTML = '<i class="fa-solid fa-edit"></i> Alteração de Endereço';
+                document.querySelector('.btn-excluir').style.display = 'inline-block';
+            } else {
+                // Modo inclusão - parâmetro é cliente_id
+                document.querySelector('.btn-excluir').style.display = 'none';
+            }
+
+            document.getElementById('btn-cancelar').addEventListener('click', function() {
+                if (tipoRota === 'alterar') {
+                    // Para voltar da edição, precisa carregar o cliente_id do endereço
+                    carregarClienteDoEndereco(parametroId);
+                } else {
+                    // Para voltar da inclusão, usa o cliente_id direto
+                    window.location.href = `/enderecos/${parametroId}`;
+                }
+            });
+        });
+
+        // CIDADES
+        async function carregarCidades() {
+            try {
+                const response = await fetch('/clientes/getCidades');
+                const data = await response.json();
+                
+                if (data.success && data.cidades) {
+                    preencherSelectCidades(data.cidades);
+                } else {
+                    console.error('Erro ao carregar cidades:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function preencherSelectCidades(cidades) {
+            const selectCidade = document.getElementById('cidade');
+            
+            selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+            
+            cidades.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade.cidade_id;
+                option.textContent = cidade.descr_cidade;
+                selectCidade.appendChild(option);
+            });
+        }
+
+        // Função para carregar dados do endereço específico
+        async function carregarDadosEndereco(enderecoId) {
+            try {
+                const response = await fetch(`/enderecos/getEndereco/${enderecoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.endereco) {
+                    preencherFormulario(data.endereco);
+                } else {
+                    console.error('Erro ao carregar dados do endereço:', data.error);
+                    alert('Erro ao carregar dados do endereço');
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        // Função para preencher o formulário com os dados do endereço
+        async function preencherFormulario(endereco) {
+            document.getElementById('descr').value = endereco.descr || '';
+            document.getElementById('nro').value = endereco.nro || '';
+            document.getElementById('bairro').value = endereco.bairro || '';
+
+            await carregarCidades().then(() => {
+                document.getElementById('cidade').value = endereco.cidade_id || '';
+            });
+        }
+
+        async function carregarClienteDoEndereco(enderecoId) {
+            try {
+                const response = await fetch(`/enderecos/getEndereco/${enderecoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.endereco) {
+                    window.location.href = `/enderecos/${data.endereco.cliente_id}`;
+                } else {
+                    window.location.href = '/clientes';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar cliente:', error);
+                window.location.href = '/clientes';
+            }
+        }
+
+        // INSERÇÃO/ATUALIZAÇÃO DE ENDEREÇO
+        document.querySelector('.btn-salvar').addEventListener('click', function(e) {
+            e.preventDefault();
+            salvarEndereco();
+        });
+
+        document.querySelector('.btn-excluir').addEventListener('click', function(e) {
+            e.preventDefault();
+            excluirEndereco();
+        });
+
+        async function salvarEndereco() {
+            const urlParts = window.location.pathname.split('/');
+            const parametroId = urlParts[urlParts.length - 1];
+            const tipoRota = urlParts[urlParts.length - 2];
+            
+            let clienteId = null;
+            let enderecoId = null;
+
+            if (tipoRota === 'alterar') {
+                enderecoId = parametroId;
+                // Para alteração, precisa buscar o cliente_id do endereço
+                const enderecoData = await buscarDadosEndereco(enderecoId);
+                clienteId = enderecoData.cliente_id;
+            } else {
+                clienteId = parametroId;
+            }
+            
+            const dadosEndereco = {
+                descr: document.getElementById('descr').value,
+                nro: document.getElementById('nro').value,
+                bairro: document.getElementById('bairro').value,
+                cidade_id: document.getElementById('cidade').value,
+                cliente_id: clienteId
+            };
+            
+            // Validações básicas
+            if (!dadosEndereco.descr) {
+                alert('Por favor, informe o endereço');
+                return;
+            }
+
+            if (!dadosEndereco.nro) {
+                alert('Por favor, informe o número');
+                return;
+            }
+
+            if (!dadosEndereco.bairro) {
+                alert('Por favor, informe o bairro');
+                return;
+            }
+
+            if (!dadosEndereco.cidade_id) {
+                alert('Por favor, selecione uma cidade');
+                return;
+            }
+
+            try {
+                let url, method;
+                
+                if (enderecoId) {
+                    dadosEndereco.endereco_id = enderecoId;
+                    url = `/enderecos/alterar/${enderecoId}`;
+                    method = 'PUT';
+                } else {
+                    url = '/enderecos/incluir';
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosEndereco)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(enderecoId ? 'Endereço alterado com sucesso!' : 'Endereço salvo com sucesso!');
+                    window.location.href = `/enderecos/${clienteId}`;
+                } else {
+                    alert('Erro ao salvar endereço: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar endereço: ' + error.message);
+            }
+        }
+
+        async function buscarDadosEndereco(enderecoId) {
+            try {
+                const response = await fetch(`/enderecos/getEndereco/${enderecoId}`);
+                const data = await response.json();
+                
+                if (data.success && data.endereco) {
+                    return data.endereco;
+                } else {
+                    throw new Error('Não foi possível carregar dados do endereço');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do endereço:', error);
+                throw error;
+            }
+        }
+
+        async function excluirEndereco() {
+            const urlParts = window.location.pathname.split('/');
+            const enderecoId = urlParts[urlParts.length - 1];
+
+            if (!confirm('Tem certeza que deseja excluir este endereço?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/enderecos/excluir', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ enderecoId: enderecoId })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Endereço excluído com sucesso!');
+                    window.location.reload();
+                } else {
+                    alert('Erro ao excluir endereço: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao excluir endereço: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

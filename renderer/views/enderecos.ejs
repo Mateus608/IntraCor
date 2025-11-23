@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endereços do Cliente - Intracor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/enderecos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <%- include('partials/header') %>
+        
+        <header class="page-header">
+            <h2><i class="fa-solid fa-location-dot"></i> Endereços </h2>
+            <div class="page-actions">
+                <a href="/clientes" class="btn-cancelar"><i class="fa-solid fa-times"></i> Cancelar</a>
+                <button class="btn-adicionar-endereco" id="btn-adicionar-endereco"><i class="fa-solid fa-plus"></i> Incluir Endereço</button>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <div class="table-container">
+                <div id="enderecos-container">
+                    <div class="loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>Carregando endereços...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Captura o id do cliente
+            const urlParts = window.location.pathname.split('/');
+            const clienteId = urlParts[urlParts.length - 1];
+            
+            console.log('ID do cliente capturado:', clienteId);
+
+            if (clienteId) {
+                carregarEnderecosCliente(clienteId);
+            } else {
+                mostrarMensagemErro('ID do cliente não encontrado');
+            }
+
+            document.getElementById('btn-adicionar-endereco').addEventListener('click', function() {
+                window.location.href = `/enderecos/incluir/${clienteId}`;
+            });
+        });
+
+        async function carregarEnderecosCliente(clienteId) {
+            try {
+                const response = await fetch(`/enderecos/getEnderecos/${clienteId}`);
+                const data = await response.json();
+                
+                if (data.success && data.enderecos) {
+                    exibirEnderecos(data.enderecos);
+                } else {
+                    mostrarMensagemSemEnderecos();
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                mostrarMensagemErro('Erro ao carregar endereços');
+            }
+        }
+
+        function exibirEnderecos(enderecos) {
+            const container = document.getElementById('enderecos-container');
+            
+            if (enderecos.length === 0) {
+                mostrarMensagemSemEnderecos();
+                return;
+            }
+
+            const tabelaHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr class="tr-pai">
+                            <th>Endereço</th>
+                            <th>Número</th>
+                            <th>Bairro</th>
+                            <th>Cidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${enderecos.map(endereco => `
+                            <tr>
+                                <td>${endereco.descr || 'N/A'}</td>
+                                <td>${endereco.nro || 'N/A'}</td>
+                                <td>${endereco.bairro || 'N/A'}</td>
+                                <td>${endereco.descr_cidade || 'N/A'}</td>
+                                <td>
+                                    <div class="col">
+                                        <button class="btn-editar" onclick="editarEndereco(${endereco.endereco_id})" title="Editar">
+                                            <i class="fa-solid fa-edit" style="color: #27ae60;"></i>
+                                        </button>
+                                        <button class="btn-excluir-endereco" onclick="excluirEndereco(${endereco.endereco_id})" title="Excluir">
+                                            <i class="fa-solid fa-trash" style="color: #e74c3c;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tabelaHTML;
+        }
+
+        function mostrarMensagemSemEnderecos() {
+            const container = document.getElementById('enderecos-container');
+            container.innerHTML = `
+                <div class="sem-enderecos" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                    <i class="fa-solid fa-location-dot" style="font-size: 3em; margin-bottom: 15px; color: #bdc3c7;"></i>
+                    <h3>Nenhum endereço cadastrado</h3>
+                    <p>Clique em "Adicionar Endereço" para cadastrar o primeiro endereço deste cliente.</p>
+                </div>
+            `;
+        }
+
+        function mostrarMensagemErro(mensagem) {
+            const container = document.getElementById('enderecos-container');
+            container.innerHTML = `
+                <div class="sem-enderecos" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                    <i class="fa-solid fa-exclamation-triangle" style="font-size: 3em; margin-bottom: 15px; color: #e74c3c;"></i>
+                    <h3>Erro</h3>
+                    <p>${mensagem}</p>
+                </div>
+            `;
+        }
+
+        function editarEndereco(enderecoId) {
+            window.location.href = `/enderecos/alterar/${enderecoId}`;
+        }
+
+        async function excluirEndereco(enderecoId) {
+            if (!confirm('Tem certeza que deseja excluir este endereço?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/enderecos/excluir', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ enderecoId: enderecoId })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Endereço excluído com sucesso!');
+                    
+                    // Recarrega a página para atualizar a lista
+                    window.location.reload();
+                } else {
+                    alert('Erro ao excluir endereço: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao excluir endereço: ' + error.message);
+            }
+        }
+
+    </script>
+</body>
+</html>
