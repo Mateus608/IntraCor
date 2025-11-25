@@ -22,6 +22,7 @@ const upload = multer({
     }
 });
 
+
 router.get('/', (req, res) => {
     res.render('apolices', {
         usuario: req.session.usuario,
@@ -37,56 +38,145 @@ router.get('/incluir', (req, res) => {
 });
 
 router.post('/salvar', upload.single('anexo'), (req, res) => {
-    // ... seu código existente da rota /salvar
-    const dados = req.body;
-    const arquivo = req.file;
-    const usuarioLogado = req.session.usuario;
+    try {
+        console.log('=== DEBUG: Requisição recebida ===');
+        console.log('req.body:', req.body);
+        console.log('req.file:', req.file);
 
-    const queryCliente = 'SELECT cliente_id FROM v_clientes WHERE nome = ?';
-    
-    db.execute(queryCliente, [dados.clienteNome], (err, results) => {
-        if (err || results.length === 0) {
-            return res.status(400).json({ success: false, message: 'Cliente não encontrado!' });
-        }
+        const dados = req.body;
+        const arquivo = req.file;
+        const usuarioLogado = req.session.usuario;
         
-        const clienteId = results[0].cliente_id;
-        const premioFormatado = parseFloat(dados.premioTotal.replace('R$', '').replace(/\./g, '').replace(',', '.'));
-        const parcelasFormatado = parseInt(dados.parcelas.replace(/\D/g, '')); 
 
-        const nomeArquivo = arquivo ? arquivo.filename : null;
-
-        const usuarioId = 1; 
-        const formaPagamentoId = 1;
+        const apoliceId = dados.apoliceId ? parseInt(dados.apoliceId) : null;
+        const clienteId = dados.cliente ? parseInt(dados.cliente) : null;
+        const formaPagamentoId = dados.formaPagamentoId ? parseInt(dados.formaPagamentoId) : null;
+        const ramoId = dados.ramoId ? parseInt(dados.ramoId) : null;
+        const premioFormatado = dados.premioTotal ? parseFloat(dados.premioTotal.toString().replace('R$', '').replace(/\./g, '').replace(',', '.')) : null;
+        const parcelasFormatado = dados.parcelas ? parseInt(dados.parcelas.toString().replace(/\D/g, '')) : null;
         const seguradoraId = 1;
-        const ramoId = 1;
 
-        const queryInsert = `CALL pk_inc_apolice(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        
-        const params = [
-            dados.nApolice, premioFormatado, parcelasFormatado,
-            dados.vigenciaInicio, dados.vigenciaFinal,
-            clienteId, formaPagamentoId, seguradoraId, ramoId, usuarioId
-        ];
-
-        db.execute(queryInsert, params, (error) => {
-            if (error) {
-                console.error('Erro ao salvar:', error);
-                return res.status(500).json({ success: false, message: 'Erro no banco.' });
-            }
-
-            if (nomeArquivo) {
-                const queryUpdateFile = 'UPDATE apolice SET arquivo_path = ? WHERE nro = ?';
-                db.execute(queryUpdateFile, [nomeArquivo, dados.nApolice], (errFile) => {
-                    if (errFile) console.error("Erro ao vincular arquivo:", errFile);
-                });
-            }
-
-            db.query('INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
-                [usuarioLogado, `Cadastrou Apólice Nº ${dados.nApolice}`]);
-
-            res.json({ success: true, message: 'Apólice salva com anexo!' });
+        console.log('=== DEBUG: Variáveis processadas ===');
+        console.log({
+            apoliceId,
+            clienteId,
+            formaPagamentoId,
+            ramoId,
+            premioFormatado,
+            parcelasFormatado,
+            seguradoraId
         });
-    });
+
+        let nomeArquivo = null;
+
+        if (arquivo) {
+            console.log('=== DEBUG: Arquivo recebido ===', arquivo.originalname);
+            const pastaDestino = path.join(process.cwd(), 'renderer/public/uploads/apolices');
+            if (!fs.existsSync(pastaDestino)) fs.mkdirSync(pastaDestino, { recursive: true });
+            const novoNome = Date.now() + path.extname(arquivo.originalname);
+            const destinoCompleto = path.join(pastaDestino, novoNome);
+            fs.renameSync(arquivo.path, destinoCompleto);
+            nomeArquivo = novoNome;
+            console.log('=== DEBUG: Arquivo movido para ===', destinoCompleto);
+        }
+
+        if (apoliceId) {
+            console.log('=== DEBUG: Atualizando apólice ===');
+            const queryUpdate = `
+                UPDATE apolice SET 
+                    nro = ?, premio = ?, parcelas = ?, vigencia_inicio = ?, vigencia_fim = ?, 
+                    cliente_id = ?, forma_pagamento_id = ?, seguradora_id = ?, ramoapolic_id = ? 
+                WHERE apolice_id = ?
+            `;
+            const params = [
+                dados.nApolice,
+                premioFormatado,
+                parcelasFormatado,
+                dados.vigenciaInicio,
+                dados.vigenciaFinal,
+                clienteId,
+                formaPagamentoId,
+                seguradoraId,
+                ramoId,
+                apoliceId
+            ];
+            console.log('=== DEBUG: Params update ===', params);
+
+            db.execute(queryUpdate, params, (error) => {
+                if (error) {
+                    console.error('Erro ao atualizar:', error);
+                    return res.status(500).json({ success: false, message: 'Erro no banco.' });
+                }
+
+                if (nomeArquivo) {
+                    const queryUpdateFile = 'UPDATE apolice SET arquivo_path = ? WHERE apolice_id = ?';
+                    db.execute(queryUpdateFile, [nomeArquivo, apoliceId], (errFile) => {
+                        if (errFile) console.error("Erro ao vincular arquivo:", errFile);
+                    });
+                }
+
+                db.query('INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
+                    [usuarioLogado, `Alterou Apólice Nº ${dados.nApolice}`]);
+
+                res.json({ success: true, message: 'Apólice atualizada com sucesso!' });
+            });
+
+        } else {
+            console.log('=== DEBUG: Inserindo nova apólice ===');
+            
+            const queryUsuarioId = `select us.usuario_id from usuario us where us.cd_usu_bd = ?`;
+
+            db.execute(queryUsuarioId, [req.session.usuario], (error, resultUsuario) => {
+                if (error) {
+                    console.error('Erro ao buscar usuário:', error);
+                    return res.status(500).json({ success: false, message: 'Erro no banco.' });
+                }
+
+                const usuarioId = resultUsuario[0].usuario_id;
+
+                const queryInsert = `CALL pk_inc_apolice(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                
+                const paramsInsert = [
+                    dados.nApolice,
+                    premioFormatado,
+                    parcelasFormatado,
+                    dados.vigenciaInicio,
+                    dados.vigenciaFinal,
+                    clienteId,
+                    formaPagamentoId,
+                    seguradoraId,
+                    ramoId,
+                    usuarioId
+                ];
+                console.log('=== DEBUG: Params insert ===', paramsInsert);
+
+                db.execute(queryInsert, paramsInsert, (error) => {
+                    if (error) {
+                        console.error('Erro ao salvar:', error);
+                        return res.status(500).json({ success: false, message: 'Erro no banco.' });
+                    }
+
+                    if (nomeArquivo) {
+                        const queryUpdateFile = 'UPDATE apolice SET arquivo_path = ? WHERE nro = ?';
+                        db.execute(queryUpdateFile, [nomeArquivo, dados.nApolice], (errFile) => {
+                            if (errFile) console.error("Erro ao vincular arquivo:", errFile);
+                        });
+                    }
+
+                    db.query('INSERT INTO auditoria_logs (usuario, acao, timestamp) VALUES (?, ?, NOW())',
+                        [usuarioLogado, `Cadastrou Apólice Nº ${dados.nApolice}`]);
+
+                    res.json({ success: true, message: 'Apólice salva com anexo!' });
+                });
+
+            });
+            
+        }
+
+    } catch (err) {
+        console.error('=== DEBUG: Erro catch ===', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
 });
 
 router.get('/getApolices', (req, res) => {
@@ -110,7 +200,7 @@ router.get('/getApolices', (req, res) => {
             numero: ap.nro,
             cliente: ap.nome_cliente,
             ramo: ap.ramo_descr || 'Geral',
-            arquivo: ap.arquivo_path
+            arquivo: ap.arquivo_path || null
         }));
 
         res.json({ success: true, apolices: apolicesFormatadas });
@@ -118,7 +208,7 @@ router.get('/getApolices', (req, res) => {
 });
 
 router.get('/getTiposApolice', (req, res) => {
-    const query = 'SELECT tpapolice_id as id, descr as descricao FROM tipo_apolice ORDER BY descr';
+    const query = 'SELECT tpapolice_id as tpapolice_id, descr as descricao FROM tipo_apolice ORDER BY descr';
     
     db.execute(query, (error, results) => {
         if (error) {
@@ -130,9 +220,8 @@ router.get('/getTiposApolice', (req, res) => {
     });
 });
 
-// Rota para obter ramos de apólice
 router.get('/getRamosApolice', (req, res) => {
-    const query = 'SELECT ramoapolic_id as id, descr as descricao FROM ramo_apolice ORDER BY descr';
+    const query = 'SELECT ramoapolic_id as ramoapolic_id, descr as descricao FROM ramo_apolice ORDER BY descr';
     
     db.execute(query, (error, results) => {
         if (error) {
@@ -144,9 +233,8 @@ router.get('/getRamosApolice', (req, res) => {
     });
 });
 
-// Rota para obter tipos de pagamento
 router.get('/getTiposPagamento', (req, res) => {
-    const query = 'SELECT tppag_id as id, descr as descricao FROM tipo_pag ORDER BY descr';
+    const query = 'SELECT tppag_id as tppag_id, descr as descricao FROM tipo_pag ORDER BY descr';
     
     db.execute(query, (error, results) => {
         if (error) {

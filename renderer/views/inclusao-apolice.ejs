@@ -36,7 +36,7 @@
                             
                             <div class="form-group">
                                 <label for="cliente">Cliente *</label>
-                                <select id="cliente" name="clienteNome" required>
+                                <select id="cliente" name="cliente" required>
                                     <option value="">Selecione um cliente</option>
                                 </select>
                             </div>
@@ -125,34 +125,43 @@
             carregarTiposApolice();
             carregarRamosApolice();
             carregarTiposPagamento();
-            
-            // Máscara para o campo de prêmio
+
+            // Máscara para prêmio
             const premioInput = document.getElementById('premioTotal');
             premioInput.addEventListener('input', formatarMoeda);
+
+            // Captura o ID da apólice pela URL
+            const urlParts = window.location.pathname.split('/');
+            const apoliceId = urlParts[urlParts.length - 1];
+
+            if (apoliceId && apoliceId !== 'incluir') {
+                carregarDadosApolice(apoliceId);
+                document.querySelector('h1').textContent = 'Alterar Apólice';
+            }
         });
 
-        // Função para formatar moeda
+        // --- Função para formatar moeda ---
         function formatarMoeda(event) {
             let value = event.target.value.replace(/\D/g, '');
             value = (value / 100).toFixed(2) + '';
-            value = value.replace(".", ",");
-            value = value.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
-            value = value.replace(/(\d)(\d{3}),/g, "$1.$2,");
+            value = value.replace('.', ',');
+            value = value.replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,');
+            value = value.replace(/(\d)(\d{3}),/g, '$1.$2,');
             event.target.value = 'R$ ' + value;
         }
 
-        // Funções para carregar dados dos selects
+        // --- Funções para carregar selects ---
         async function carregarClientes() {
             try {
                 const response = await fetch('/clientes/getClientes');
                 const data = await response.json();
-                
                 const select = document.getElementById('cliente');
+
                 if (data.success && data.clientes) {
                     select.innerHTML = '<option value="">Selecione um cliente</option>';
                     data.clientes.forEach(cliente => {
                         const option = document.createElement('option');
-                        option.value = cliente.nome;
+                        option.value = cliente.cliente_id;
                         option.textContent = cliente.nome;
                         select.appendChild(option);
                     });
@@ -166,13 +175,13 @@
             try {
                 const response = await fetch('/apolices/getTiposApolice');
                 const data = await response.json();
-                
                 const select = document.getElementById('tipoApolice');
+
                 if (data.success && data.tipos) {
                     select.innerHTML = '<option value="">Selecione o tipo</option>';
                     data.tipos.forEach(tipo => {
                         const option = document.createElement('option');
-                        option.value = tipo.id;
+                        option.value = tipo.tpapolice_id;
                         option.textContent = tipo.descricao;
                         select.appendChild(option);
                     });
@@ -186,13 +195,13 @@
             try {
                 const response = await fetch('/apolices/getRamosApolice');
                 const data = await response.json();
-                
                 const select = document.getElementById('ramoApolice');
+
                 if (data.success && data.ramos) {
                     select.innerHTML = '<option value="">Selecione o ramo</option>';
                     data.ramos.forEach(ramo => {
                         const option = document.createElement('option');
-                        option.value = ramo.id;
+                        option.value = ramo.ramoapolic_id;
                         option.textContent = ramo.descricao;
                         select.appendChild(option);
                     });
@@ -206,13 +215,13 @@
             try {
                 const response = await fetch('/apolices/getTiposPagamento');
                 const data = await response.json();
-                
                 const select = document.getElementById('tipoPagamento');
+
                 if (data.success && data.tiposPagamento) {
                     select.innerHTML = '<option value="">Selecione a forma</option>';
                     data.tiposPagamento.forEach(tipo => {
                         const option = document.createElement('option');
-                        option.value = tipo.id;
+                        option.value = tipo.tppag_id;
                         option.textContent = tipo.descricao;
                         select.appendChild(option);
                     });
@@ -222,29 +231,116 @@
             }
         }
 
-        // Submit do formulário
-        document.getElementById('form-apolice').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
+        // --- Função para carregar dados de uma apólice ---
+        async function carregarDadosApolice(apoliceId) {
             try {
+                const response = await fetch(`/apolices/getApolice/${apoliceId}`);
+                const data = await response.json();
+
+                if (data.success && data.apolice) {
+                    preencherFormularioApolice(data.apolice);
+                } else {
+                    console.error('Erro ao carregar dados da apólice:', data.error);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        // --- Função para preencher formulário ---
+        async function preencherFormularioApolice(apolice) {
+            document.getElementById('cliente').value = apolice.cliente_id || '';
+            document.getElementById('nApolice').value = apolice.nro || '';
+            document.getElementById('premioTotal').value = apolice.premio ? 'R$ ' + apolice.premio.toFixed(2).replace('.', ',') : '';
+            document.getElementById('parcelas').value = apolice.parcelas || '';
+            document.getElementById('vigenciaInicio').value = apolice.vigenciaInicio || '';
+            document.getElementById('vigenciaFinal').value = apolice.vigenciaFinal || '';
+
+            await Promise.all([
+                carregarClientes().then(() => { document.getElementById('cliente').value = apolice.cliente_id || ''; }),
+                carregarTiposApolice().then(() => { document.getElementById('tipoApolice').value = apolice.tipoApoliceId || ''; }),
+                carregarRamosApolice().then(() => { document.getElementById('ramoApolice').value = apolice.ramoId || ''; }),
+                carregarTiposPagamento().then(() => { document.getElementById('tipoPagamento').value = apolice.formaPagamentoId || ''; })
+            ]);
+        }
+
+        document.querySelector('.btn-primary').addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            const urlParts = window.location.pathname.split('/');
+            const apoliceId = urlParts[urlParts.length - 1];
+
+            // Campos do formulário
+            const cliente = document.getElementById('cliente').value;
+            const nApolice = document.getElementById('nApolice').value;
+            const tipoApoliceId = document.getElementById('tipoApolice').value;
+            const ramoId = document.getElementById('ramoApolice').value;
+            const formaPagamentoId = document.getElementById('tipoPagamento').value;
+            const vigenciaInicio = document.getElementById('vigenciaInicio').value;
+            const vigenciaFinal = document.getElementById('vigenciaFinal').value;
+
+            // Formata prêmio e parcelas - CORREÇÃO AQUI
+            const premioTotalRaw = document.getElementById('premioTotal').value;
+            const premioFormatado = premioTotalRaw ? 
+                parseFloat(premioTotalRaw.replace('R$', '').replace(/\./g, '').replace(',', '.')) : null;
+
+            const parcelasRaw = document.getElementById('parcelas').value;
+            const parcelasFormatado = parcelasRaw ? 
+                parseInt(parcelasRaw.replace(/\D/g, '')) : null;
+
+            // Validações básicas
+            if (!cliente) { alert('Selecione um cliente'); return; }
+            if (!nApolice) { alert('Informe o número da apólice'); return; }
+            if (!tipoApoliceId) { alert('Selecione o tipo de apólice'); return; }
+            if (!ramoId) { alert('Selecione o ramo'); return; }
+            if (premioFormatado === null || isNaN(premioFormatado)) { alert('Informe um prêmio válido'); return; }
+            if (parcelasFormatado === null || isNaN(parcelasFormatado)) { alert('Informe o número de parcelas'); return; }
+            if (!formaPagamentoId) { alert('Selecione a forma de pagamento'); return; }
+            if (!vigenciaInicio) { alert('Informe a data de início da vigência'); return; }
+            if (!vigenciaFinal) { alert('Informe a data final da vigência'); return; }
+
+            try {
+                const formData = new FormData();
+                formData.append('cliente', cliente);
+                formData.append('nApolice', nApolice);
+                formData.append('tipoApoliceId', tipoApoliceId); // CORRETO
+                formData.append('ramoId', ramoId);
+                formData.append('premioTotal', premioFormatado); // JÁ FORMATADO
+                formData.append('parcelas', parcelasFormatado); // JÁ FORMATADO
+                formData.append('formaPagamentoId', formaPagamentoId);
+                formData.append('vigenciaInicio', vigenciaInicio);
+                formData.append('vigenciaFinal', vigenciaFinal);
+                
+                if (apoliceId && apoliceId !== 'incluir') {
+                    formData.append('apoliceId', apoliceId);
+                }
+
+                // Anexo
+                const anexo = document.getElementById('anexo').files[0];
+                if (anexo) formData.append('anexo', anexo);
+
+                console.log('Enviando dados:', {
+                    cliente, nApolice, tipoApoliceId, ramoId, premioFormatado, 
+                    parcelasFormatado, formaPagamentoId, vigenciaInicio, vigenciaFinal, apoliceId
+                });
+
                 const response = await fetch('/apolices/salvar', {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    alert('Apólice salva com sucesso!');
+                    alert(apoliceId && apoliceId !== 'incluir' ? 'Apólice alterada com sucesso!' : 'Apólice salva com sucesso!');
                     window.location.href = '/apolices';
                 } else {
-                    alert('Erro ao salvar apólice: ' + result.message);
+                    alert('Erro ao salvar apólice: ' + (result.message || 'Erro desconhecido'));
                 }
+
             } catch (error) {
                 console.error('Erro:', error);
-                alert('Erro ao salvar apólice.');
+                alert('Erro ao salvar apólice: ' + error.message);
             }
         });
     </script>

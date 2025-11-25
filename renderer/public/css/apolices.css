@@ -1,3 +1,22 @@
+/* --- RESET BÁSICO E ESTRUTURA --- */
+* {
+    box-sizing: border-box; /* Garante que padding não aumente a largura total */
+}
+
+/* Container principal para centralizar o conteúdo na tela */
+.main-wrapper, .content-area {
+    width: 100%;
+}
+
+/* Centraliza o conteúdo interno para não esticar em monitores gigantes */
+.filter-bar, 
+.content-area,
+.page-header {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
 /* --- 5. ESTILOS DA PÁGINA DE APÓLICES --- */
 
 /* HEADER DA PÁGINA */
@@ -5,9 +24,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px;
+    padding: 20px; /* Aumentado levemente para respiro */
     background-color: #f8f9fa;
     border-bottom: 1px solid #dcdcdc;
+    margin-bottom: 20px; /* Espaço antes do conteúdo */
 }
 
 .page-header h2 {
@@ -16,6 +36,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    margin: 0;
 }
 
 .page-actions button, .page-actions a {
@@ -38,7 +59,8 @@
     border: 1px solid #dcdcdc;
     border-radius: 8px;
     padding: 25px;
-    margin: 20px;
+    margin-bottom: 30px; /* Espaço inferior */
+    width: 100%;
 }
 
 .form-container h1 {
@@ -50,6 +72,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-top: 0;
 }
 
 .form-grid {
@@ -74,6 +97,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-top: 0;
 }
 
 .form-section h3 i {
@@ -104,6 +128,7 @@
     font-size: 14px;
     background-color: #fff;
     transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; /* Garante preenchimento total */
 }
 
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
@@ -175,27 +200,57 @@
 }
 
 /* BARRA DE FILTRO (para lista de apólices) */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px; /* Alinha com o conteúdo */
+    margin-bottom: 20px;
+    gap: 15px;
+    flex-wrap: wrap; /* Permite quebra em telas menores */
+}
+
+.filter-left, .filter-right {
+    display: flex;
+    gap: 10px;
+}
+
 .filter-center-search {
-    width: 30%;
+    flex: 1; /* Ocupa o espaço restante */
+    max-width: 500px; /* Limita largura da busca */
 }
 
 .filter-center-search .search-box {
     width: 100%;
+    display: flex;
 }
 
 .filter-center-search .search-box input {
     width: 100%;
-    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+}
+
+.filter-center-search .search-box button {
+    padding: 0 15px;
+    border: 1px solid #ccc;
+    background: #f8f9fa;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
 }
 
 /* LISTA DE APÓLICES */
 .apolice-list-container {
-    width: 100%;
+    width: 100%; /* Ocupa 100% do content-area */
     background-color: #ffffff;
     border: 1px solid #dcdcdc;
     border-radius: 8px;
     overflow: hidden;
-    margin: 20px;
+    margin-bottom: 40px;
+    /* Sombras suaves para destacar do fundo */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
 }
 
 .apolice-list-container ul {
@@ -208,8 +263,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 20px;
     border-bottom: 1px solid #eaeaea;
+    width: 100%;
+    background-color: #fff;
+    transition: background-color 0.2s ease;
 }
 
 .apolice-item:last-child {
@@ -217,25 +275,35 @@
 }
 
 .apolice-item:hover {
-    background-color: #f5fafd;
+    background-color: #f8fbff; /* Azul bem claro no hover */
 }
 
 /* Lado esquerdo (ícone e texto) */
 .apolice-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px; /* Mais espaço entre ícone e texto */
 }
 
 .apolice-info .fa-file-pdf {
-    color: #d32f2f;
-    font-size: 1.4rem;
+    color: #dc3545; /* Vermelho padrão PDF */
+    font-size: 28px; /* Ícone um pouco maior */
 }
 
 .apolice-info span {
-    font-size: 0.95rem;
-    font-weight: 500;
+    display: block;
+}
+
+.apolice-info-text strong {
+    font-size: 1rem;
     color: #333;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.apolice-info-text span {
+    font-size: 0.85rem;
+    color: #666;
 }
 
 /* Lado direito (ações) */
@@ -247,27 +315,32 @@
 
 .apolice-actions a {
     text-decoration: none;
-    color: #555;
-    font-size: 1.1rem;
-    transition: color 0.2s;
+    color: #6c757d;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+    padding: 5px;
+    border-radius: 4px;
 }
 
 .apolice-actions a:hover {
-    color: #002366;
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
 }
 
 /* BOTÃO INCLUIR NA BARRA DE FILTRO */
 .btn-primary-incluir {
     background-color: #0d6efd;
     color: white;
-    padding: 8px 16px;
+    padding: 10px 20px;
     text-decoration: none;
     border-radius: 4px;
     font-weight: bold;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     transition: background-color 0.2s;
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .btn-primary-incluir:hover {
@@ -294,8 +367,13 @@
     margin-top: 4px;
 }
 
-/* RESPONSIVIDADE */
+/* RESPONSIVIDADE - MOBILE */
 @media (max-width: 768px) {
+    .content-area, .filter-bar, .page-header {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
     .form-grid {
         grid-template-columns: 1fr;
     }
@@ -303,20 +381,39 @@
     .form-actions {
         flex-direction: column;
     }
+
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .filter-left {
+        justify-content: space-between;
+    }
     
     .filter-center-search {
-        width: 100%;
-        margin-bottom: 10px;
+        max-width: 100%;
+        order: -1; /* Joga a busca para o topo no mobile */
+    }
+
+    .filter-right {
+        align-self: flex-end;
     }
     
     .apolice-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 15px;
     }
     
     .apolice-actions {
-        align-self: flex-end;
+        align-self: flex-end; /* Alinha botões à direita no mobile */
+        width: 100%;
+        justify-content: flex-end;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 10px;
+        margin-top: 5px;
     }
 }
 
